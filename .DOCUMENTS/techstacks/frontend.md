@@ -9,8 +9,21 @@ This document defines the client-facing technologies and libraries currently ins
 - **File Extensions**: `.cshtml`
 - **Location**: `Views/`
   - `Views/Shared/_Layout.cshtml`: Master layout wrapping all views.
-  - `Views/{Controller}/{Action}.cshtml`: Individual page templates.
+  - `Views/{Controller}/{Action}.cshtml`: Individual page templates acting as **Orchestrators**.
+  - `Views/{Controller}/{Action}Partials/`: Feature-scoped partial templates (`_SectionName.cshtml`).
 - **Role**: Server-Side Rendering (SSR). Embeds dynamic C# values into standard HTML at request time using the `@` symbol.
+- **Frontend View Pattern (Orchestrator + Partials)**:
+  - Complex views are broken down into cohesive, self-contained partial views rather than monolithic files.
+  - Example:
+    ```text
+    Views/Home/
+    ├── Index.cshtml               --> Orchestrator (assembles layout & sections)
+    └── IndexPartials/             --> Feature-scoped partials
+        ├── _Hero.cshtml
+        ├── _Features.cshtml
+        └── _CTA.cshtml
+    ```
+  - Orchestrators include partials using `<partial name="IndexPartials/_Section" />` tag helpers.
 - **Notice on SPA / React**: 
   - React is **NOT** used in this setup to adhere directly to ASP.NET Core MVC requirements. Razor generates the markup directly on the server.
 
@@ -27,13 +40,22 @@ This document defines the client-facing technologies and libraries currently ins
 
 ---
 
-## 3. Custom Styling: Vanilla CSS
-- **Primary File**: `wwwroot/css/site.css`
-- **Scoped Styles**: `VotingSystem.styles.css` (ASP.NET Core CSS Isolation)
+## 3. Custom Styling: Modular Vanilla CSS (Option 1 Standard)
+- **Primary Master File**: `wwwroot/css/site.css` (central entry point importing base and component layers)
+- **Base Layer (`wwwroot/css/base/`)**:
+  - `variables.css`: Design tokens (CSS custom properties for colors, typography, spacing, radius, elevation).
+  - `reset.css`: Global resets, box-sizing, and typography defaults.
+- **Components Layer (`wwwroot/css/components/`)**:
+  - `navbar.css`: Navigation bar styling.
+  - `footer.css`: Global footer styling.
+  - Additional reusable component styles (buttons, cards, forms).
+- **Pages Layer (`wwwroot/css/pages/`)**:
+  - View-specific stylesheets (e.g., `home.css`) injected via `@section Styles` in Razor views.
+- **Scoped Styles**: `VotingSystem.styles.css` (ASP.NET Core native CSS Isolation support).
 - **Usage**:
-  - Overrides Bootstrap styles.
-  - Custom design tokens, color schemes, typography, card layouts, animations, and transitions.
-  - Modern CSS features: CSS Grid, Flexbox, CSS Custom Properties (Variables), and Media Queries.
+  - Overrides Bootstrap styles while preserving responsive grid utilities.
+  - Consistent design tokens and CSS custom properties (`var(--color-primary)`).
+  - Modern CSS features: Flexbox, CSS Grid, custom properties, and transitions.
 
 ---
 
