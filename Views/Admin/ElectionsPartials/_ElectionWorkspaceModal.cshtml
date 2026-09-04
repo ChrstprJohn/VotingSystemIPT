@@ -1,0 +1,454 @@
+<!-- Modal: Election Workspace (Manage Election) -->
+<div class="modal fade import-modal" id="electionWorkspaceModal" tabindex="-1" aria-labelledby="electionWorkspaceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header border-bottom pb-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="election-workspace-avatar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <h5 class="modal-title fw-bold text-dark mb-0" id="electionWorkspaceModalLabel">
+                                Supreme Student Council General Elections
+                            </h5>
+                            <span class="status-badge-dot active ms-1">
+                                <span class="dot-indicator active"></span>
+                                Ongoing
+                            </span>
+                        </div>
+                        <p class="text-muted small mb-0 mt-0.5">
+                            A.Y. 2026–2027 &bull; Oct 15, 2026, 08:00 AM &ndash; Oct 16, 2026, 05:00 PM
+                        </p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Workspace Tabs Navigation -->
+            <div class="px-4 pt-2 border-bottom bg-light-subtle">
+                <ul class="nav nav-tabs border-bottom-0 gap-1 election-tabs" id="electionTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overviewTabPane" type="button" role="tab">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                            Overview & Stats
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="positions-tab" data-bs-toggle="tab" data-bs-target="#positionsTabPane" type="button" role="tab">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <line x1="20" y1="8" x2="20" y2="14"></line>
+                                <line x1="23" y1="11" x2="17" y2="11"></line>
+                            </svg>
+                            Positions & Quotas
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="partylists-tab" data-bs-toggle="tab" data-bs-target="#partylistsTabPane" type="button" role="tab">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
+                                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                                <line x1="4" y1="22" x2="4" y2="15"></line>
+                            </svg>
+                            Partylists
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="candidates-tab" data-bs-toggle="tab" data-bs-target="#candidatesTabPane" type="button" role="tab">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            Candidates
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settingsTabPane" type="button" role="tab">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                            Settings
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Tab Content Panes -->
+            <div class="modal-body p-4">
+                <div class="tab-content" id="electionTabsContent">
+                    <!-- ============================================== -->
+                    <!-- TAB 1: OVERVIEW & STATS -->
+                    <!-- ============================================== -->
+                    <div class="tab-pane fade show active" id="overviewTabPane" role="tabpanel">
+                        <!-- Live Status Banner -->
+                        <div class="p-3 mb-4 rounded border bg-success-subtle border-success-subtle d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="dot-indicator active"></span>
+                                <span class="fw-semibold text-success-emphasis">Voting is currently LIVE and accepting ballots</span>
+                            </div>
+                            <span class="small text-muted">Closes Oct 16, 2026 at 05:00 PM</span>
+                        </div>
+
+                        <!-- Mini stats grid -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-light rounded border">
+                                    <div class="text-muted small fw-medium mb-1">Total Turnout</div>
+                                    <div class="fs-4 fw-bold text-dark">68.0%</div>
+                                    <div class="small text-muted mt-1">3,278 of 4,820 voted</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-light rounded border">
+                                    <div class="text-muted small fw-medium mb-1">Contested Positions</div>
+                                    <div class="fs-4 fw-bold text-dark">10</div>
+                                    <div class="small text-muted mt-1">All positions active</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-light rounded border">
+                                    <div class="text-muted small fw-medium mb-1">Fielded Candidates</div>
+                                    <div class="fs-4 fw-bold text-dark">24</div>
+                                    <div class="small text-muted mt-1">Across 2 Partylists</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="p-3 bg-light rounded border">
+                                    <div class="text-muted small fw-medium mb-1">Remaining Time</div>
+                                    <div class="fs-4 fw-bold text-dark">14h 22m</div>
+                                    <div class="small text-muted mt-1">Countdown timer</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="card border mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="small fw-semibold text-dark">Voter Participation Progress</span>
+                                    <span class="small fw-bold text-dark">3,278 / 4,820 Ballots Cast</span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar bg-dark" role="progressbar" style="width: 68%;" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================== -->
+                    <!-- TAB 2: POSITIONS & QUOTAS -->
+                    <!-- ============================================== -->
+                    <div class="tab-pane fade" id="positionsTabPane" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1">Contested Positions & Quotas</h6>
+                                <p class="text-muted small mb-0">Set how many candidates can win and the limit per partylist.</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                    </svg>
+                                    <span>Load Preset Template</span>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#addPositionModal">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    <span>Add Position</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Positions Table -->
+                        <div class="table-responsive border rounded">
+                            <table class="table table-hover align-middle mb-0 small">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 50px;">#</th>
+                                        <th>Position Title</th>
+                                        <th style="width: 150px;">Winners (Seats)</th>
+                                        <th style="width: 180px;">Max Per Partylist</th>
+                                        <th style="width: 120px;">Abstain</th>
+                                        <th style="width: 140px;">Fielded</th>
+                                        <th style="width: 100px; text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-muted fw-bold">1</td>
+                                        <td>
+                                            <span class="fw-semibold text-dark">President</span>
+                                            <span class="d-block text-muted small">Single-seat executive</span>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border">1 Winner</span></td>
+                                        <td><span class="badge bg-light text-dark border">Max 1 per party</span></td>
+                                        <td><span class="text-success fw-medium">Allowed</span></td>
+                                        <td><span class="text-dark fw-semibold">2 Candidates</span></td>
+                                        <td style="text-align: right;">
+                                            <button type="button" class="btn btn-xs btn-outline-secondary py-0.5 px-1.5 me-1">Edit</button>
+                                            <button type="button" class="btn btn-xs btn-outline-danger py-0.5 px-1.5">Del</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted fw-bold">2</td>
+                                        <td>
+                                            <span class="fw-semibold text-dark">Vice President</span>
+                                            <span class="d-block text-muted small">Single-seat executive</span>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border">1 Winner</span></td>
+                                        <td><span class="badge bg-light text-dark border">Max 1 per party</span></td>
+                                        <td><span class="text-success fw-medium">Allowed</span></td>
+                                        <td><span class="text-dark fw-semibold">2 Candidates</span></td>
+                                        <td style="text-align: right;">
+                                            <button type="button" class="btn btn-xs btn-outline-secondary py-0.5 px-1.5 me-1">Edit</button>
+                                            <button type="button" class="btn btn-xs btn-outline-danger py-0.5 px-1.5">Del</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted fw-bold">3</td>
+                                        <td>
+                                            <span class="fw-semibold text-dark">Secretary General</span>
+                                            <span class="d-block text-muted small">Secretariat division</span>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border">1 Winner</span></td>
+                                        <td><span class="badge bg-light text-dark border">Max 1 per party</span></td>
+                                        <td><span class="text-success fw-medium">Allowed</span></td>
+                                        <td><span class="text-dark fw-semibold">2 Candidates</span></td>
+                                        <td style="text-align: right;">
+                                            <button type="button" class="btn btn-xs btn-outline-secondary py-0.5 px-1.5 me-1">Edit</button>
+                                            <button type="button" class="btn btn-xs btn-outline-danger py-0.5 px-1.5">Del</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted fw-bold">4</td>
+                                        <td>
+                                            <span class="fw-semibold text-dark">Treasurer</span>
+                                            <span class="d-block text-muted small">Finance division</span>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border">1 Winner</span></td>
+                                        <td><span class="badge bg-light text-dark border">Max 1 per party</span></td>
+                                        <td><span class="text-success fw-medium">Allowed</span></td>
+                                        <td><span class="text-dark fw-semibold">2 Candidates</span></td>
+                                        <td style="text-align: right;">
+                                            <button type="button" class="btn btn-xs btn-outline-secondary py-0.5 px-1.5 me-1">Edit</button>
+                                            <button type="button" class="btn btn-xs btn-outline-danger py-0.5 px-1.5">Del</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted fw-bold">5</td>
+                                        <td>
+                                            <span class="fw-semibold text-dark">Councilors (Senators)</span>
+                                            <span class="d-block text-muted small">Multi-seat legislative council</span>
+                                        </td>
+                                        <td><span class="badge bg-dark text-white">6 Winners</span></td>
+                                        <td><span class="badge bg-dark text-white">Max 6 per party</span></td>
+                                        <td><span class="text-success fw-medium">Allowed</span></td>
+                                        <td><span class="text-dark fw-semibold">12 Candidates</span></td>
+                                        <td style="text-align: right;">
+                                            <button type="button" class="btn btn-xs btn-outline-secondary py-0.5 px-1.5 me-1">Edit</button>
+                                            <button type="button" class="btn btn-xs btn-outline-danger py-0.5 px-1.5">Del</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ============================================== -->
+                    <!-- TAB 3: PARTYLISTS -->
+                    <!-- ============================================== -->
+                    <div class="tab-pane fade" id="partylistsTabPane" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1">Registered Partylists</h6>
+                                <p class="text-muted small mb-0">Partylists registered to field candidates in this election.</p>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>Register Partylist</span>
+                            </button>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded bg-white">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">SANDIGAN</span>
+                                        <span class="small text-muted">10 Candidates Fielded</span>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-1">Sandigan Student Alliance</h6>
+                                    <p class="text-muted small mb-3">Advocacy: Transparent governance and student welfare empowerment.</p>
+                                    <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                                        <span class="small text-success">Slate Complete (10/10)</span>
+                                        <button class="btn btn-xs btn-outline-secondary py-0.5 px-2">View Slate</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded bg-white">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">ALAB</span>
+                                        <span class="small text-muted">10 Candidates Fielded</span>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-1">Alab Youth Coalition</h6>
+                                    <p class="text-muted small mb-3">Advocacy: Progressive student action and modern campus facilities.</p>
+                                    <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                                        <span class="small text-success">Slate Complete (10/10)</span>
+                                        <button class="btn btn-xs btn-outline-secondary py-0.5 px-2">View Slate</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================== -->
+                    <!-- TAB 4: CANDIDATES -->
+                    <!-- ============================================== -->
+                    <div class="tab-pane fade" id="candidatesTabPane" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1">Candidate Roster</h6>
+                                <p class="text-muted small mb-0">Official candidate list grouped by position.</p>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>Add Candidate</span>
+                            </button>
+                        </div>
+
+                        <!-- Sample Candidates List -->
+                        <div class="table-responsive border rounded">
+                            <table class="table table-hover align-middle mb-0 small">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Candidate Name</th>
+                                        <th>Running Position</th>
+                                        <th>Affiliation / Partylist</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="candidate-avatar">JD</div>
+                                                <div>
+                                                    <span class="fw-bold text-dark">Juan Dela Cruz</span>
+                                                    <span class="d-block text-muted small">Student ID: 24-1635</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border">President</span></td>
+                                        <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">Sandigan</span></td>
+                                        <td><span class="text-success fw-medium">&bull; Approved</span></td>
+                                        <td style="text-align: right;">
+                                            <button class="btn btn-xs btn-outline-secondary py-0.5 px-2">Edit</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="candidate-avatar">MC</div>
+                                                <div>
+                                                    <span class="fw-bold text-dark">Maria Clara Gomez</span>
+                                                    <span class="d-block text-muted small">Student ID: 24-1636</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border">President</span></td>
+                                        <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle">Alab Youth</span></td>
+                                        <td><span class="text-success fw-medium">&bull; Approved</span></td>
+                                        <td style="text-align: right;">
+                                            <button class="btn btn-xs btn-outline-secondary py-0.5 px-2">Edit</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="candidate-avatar">CA</div>
+                                                <div>
+                                                    <span class="fw-bold text-dark">Carlos Alvarez</span>
+                                                    <span class="d-block text-muted small">Student ID: 24-1637</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border">Vice President</span></td>
+                                        <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">Sandigan</span></td>
+                                        <td><span class="text-success fw-medium">&bull; Approved</span></td>
+                                        <td style="text-align: right;">
+                                            <button class="btn btn-xs btn-outline-secondary py-0.5 px-2">Edit</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ============================================== -->
+                    <!-- TAB 5: SETTINGS -->
+                    <!-- ============================================== -->
+                    <div class="tab-pane fade" id="settingsTabPane" role="tabpanel">
+                        <h6 class="fw-bold text-dark mb-3">Election Parameters & Schedule</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Election Title</label>
+                                <input type="text" class="form-control form-control-sm" value="Supreme Student Council General Elections" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Status Override</label>
+                                <select class="form-select form-select-sm">
+                                    <option>Preparation</option>
+                                    <option>Upcoming</option>
+                                    <option selected>Ongoing</option>
+                                    <option>Completed</option>
+                                    <option>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-bold text-danger d-block">Danger Zone</span>
+                                <span class="small text-muted">Terminate or cancel this election.</span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger">Cancel Election</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer border-top pt-2 pb-2">
+                <button type="button" class="btn btn-sm btn-light border" data-bs-dismiss="modal">Close Workspace</button>
+            </div>
+        </div>
+    </div>
+</div>

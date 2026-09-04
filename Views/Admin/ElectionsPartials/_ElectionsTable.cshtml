@@ -1,0 +1,215 @@
+<!-- Elections Table -->
+<div class="admin-table-container">
+    <table class="admin-table" id="electionsTable">
+        <thead>
+            <tr>
+                <th style="min-width: 250px;">Election Title & Scope</th>
+                <th style="min-width: 200px;">Schedule (Start & End)</th>
+                <th style="width: 140px;">Status</th>
+                <th style="width: 150px;">Ballot Setup</th>
+                <th style="width: 130px; text-align: right;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Row 1: Ongoing -->
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="status-indicator-pulse live"></span>
+                        <div>
+                            <span class="voter-name-main text-dark">Supreme Student Council General Elections</span>
+                            <span class="voter-email-sub">A.Y. 2026–2027 &bull; University-Wide Campus</span>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex flex-column text-nowrap">
+                        <span class="text-dark small fw-medium">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1 text-muted">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            Oct 15, 2026 &bull; 08:00 AM
+                        </span>
+                        <span class="text-muted small">
+                            to Oct 16, 2026 &bull; 05:00 PM
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <span class="status-badge-dot active">
+                        <span class="dot-indicator active"></span>
+                        Ongoing
+                    </span>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-light text-dark border small fw-normal">10 Positions</span>
+                        <span class="badge bg-light text-muted border small fw-normal">24 Candidates</span>
+                    </div>
+                </td>
+                <td style="text-align: right;">
+                    <button type="button" class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1 px-2.5 py-1" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal">
+                        <span>Manage</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </td>
+            </tr>
+
+            <!-- Row 2: Preparation -->
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="status-indicator-pulse prep"></span>
+                        <div>
+                            <span class="voter-name-main text-dark">College of Computing Studies (CCS) Council</span>
+                            <span class="voter-email-sub">1st Semester 2026–2027 &bull; Local College Election</span>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex flex-column text-nowrap">
+                        <span class="text-dark small fw-medium">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1 text-muted">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            Nov 02, 2026 &bull; 09:00 AM
+                        </span>
+                        <span class="text-muted small">
+                            to Nov 03, 2026 &bull; 04:00 PM
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <span class="status-badge-dot warning">
+                        <span class="dot-indicator warning"></span>
+                        Preparation
+                    </span>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-light text-dark border small fw-normal">6 Positions</span>
+                        <span class="badge bg-light text-muted border small fw-normal">14 Candidates</span>
+                    </div>
+                </td>
+                <td style="text-align: right;">
+                    <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 px-2.5 py-1" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal">
+                        <span>Manage</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </td>
+            </tr>
+
+            <!-- Row 3: Upcoming -->
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="status-indicator-pulse upcoming"></span>
+                        <div>
+                            <span class="voter-name-main text-dark">Engineering Student Council Special Election</span>
+                            <span class="voter-email-sub">College of Engineering &bull; Term 2026</span>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex flex-column text-nowrap">
+                        <span class="text-dark small fw-medium">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1 text-muted">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            Nov 20, 2026 &bull; 08:30 AM
+                        </span>
+                        <span class="text-muted small">
+                            to Nov 21, 2026 &bull; 05:00 PM
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <span class="status-badge-dot info">
+                        <span class="dot-indicator info"></span>
+                        Upcoming
+                    </span>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-light text-dark border small fw-normal">8 Positions</span>
+                        <span class="badge bg-light text-muted border small fw-normal">0 Candidates</span>
+                    </div>
+                </td>
+                <td style="text-align: right;">
+                    <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 px-2.5 py-1" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal">
+                        <span>Manage</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </td>
+            </tr>
+
+            <!-- Row 4: Completed -->
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="status-indicator-pulse completed"></span>
+                        <div>
+                            <span class="voter-name-main text-dark">SSC Midterm Representative Plebiscite</span>
+                            <span class="voter-email-sub">A.Y. 2025–2026 &bull; Special Vote</span>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex flex-column text-nowrap">
+                        <span class="text-dark small fw-medium">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1 text-muted">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            May 10, 2025 &bull; 08:00 AM
+                        </span>
+                        <span class="text-muted small">
+                            to May 10, 2025 &bull; 06:00 PM
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <span class="status-badge-dot inactive">
+                        <span class="dot-indicator inactive"></span>
+                        Completed
+                    </span>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-light text-muted border small fw-normal">4 Positions</span>
+                        <span class="badge bg-light text-muted border small fw-normal">Final Tally</span>
+                    </div>
+                </td>
+                <td style="text-align: right;">
+                    <button type="button" class="btn btn-sm btn-light border d-inline-flex align-items-center gap-1 px-2.5 py-1 text-muted" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal">
+                        <span>View</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination Footer -->
+<div class="voters-pagination-container">
+    <span>Showing 4 active and recorded elections</span>
+    <nav aria-label="Table pagination">
+        <ul class="pagination pagination-sm m-0 gap-1">
+            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </nav>
+</div>

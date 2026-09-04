@@ -1,3 +1,149 @@
 @{
     ViewData["Title"] = "Elections";
 }
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin.css" asp-append-version="true" />
+}
+
+@section TopbarActions {
+    <button type="button" class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1 px-3 py-1" data-bs-toggle="modal" data-bs-target="#createElectionModal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Create Election</span>
+    </button>
+}
+
+<div class="container-fluid px-0">
+    <!-- Metrics Row -->
+    <partial name="ElectionsPartials/_ElectionsMetrics" />
+
+    <!-- Main Table Card -->
+    <div class="admin-card">
+        <partial name="ElectionsPartials/_ElectionsToolbar" />
+        <partial name="ElectionsPartials/_ElectionsTable" />
+    </div>
+</div>
+
+<!-- Modals -->
+<partial name="ElectionsPartials/_CreateElectionModal" />
+<partial name="ElectionsPartials/_ElectionWorkspaceModal" />
+<partial name="ElectionsPartials/_AddPositionModal" />
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Dynamic Positions Row Builder in Create Modal
+            const tbody = document.getElementById('positionsTableBody');
+            const btnAddRow = document.getElementById('btnAddPositionRow');
+            const btnLoadPreset = document.getElementById('btnLoadPresetTemplate');
+
+            function updateRowNumbers() {
+                if (!tbody) return;
+                const rows = tbody.querySelectorAll('tr');
+                rows.forEach((row, index) => {
+                    const numCell = row.querySelector('td:first-child');
+                    if (numCell) numCell.textContent = index + 1;
+                });
+            }
+
+            function createRowHtml(index, title, winners, maxParty, allowAbstain) {
+                return `
+                    <td class="text-muted fw-bold">${index}</td>
+                    <td>
+                        <input type="text" class="form-control form-control-sm fw-semibold text-dark" value="${title}" placeholder="e.g. Representative" required />
+                    </td>
+                    <td>
+                        <input type="number" class="form-control form-control-sm" value="${winners}" min="1" max="50" required />
+                    </td>
+                    <td>
+                        <input type="number" class="form-control form-control-sm" value="${maxParty}" min="1" max="50" required />
+                    </td>
+                    <td style="text-align: center;">
+                        <input class="form-check-input" type="checkbox" ${allowAbstain ? 'checked' : ''} title="Allow abstain" />
+                    </td>
+                    <td style="text-align: center;">
+                        <button type="button" class="btn btn-xs btn-outline-danger py-1 px-2 remove-pos-btn" title="Remove position">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </td>
+                `;
+            }
+
+            if (btnAddRow && tbody) {
+                btnAddRow.addEventListener('click', function () {
+                    const rowCount = tbody.querySelectorAll('tr').length + 1;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = createRowHtml(rowCount, '', 1, 1, true);
+                    tbody.appendChild(tr);
+                    tr.querySelector('input[type="text"]').focus();
+                });
+            }
+
+            if (tbody) {
+                tbody.addEventListener('click', function (e) {
+                    const removeBtn = e.target.closest('.remove-pos-btn');
+                    if (removeBtn) {
+                        const tr = removeBtn.closest('tr');
+                        if (tbody.querySelectorAll('tr').length > 1) {
+                            tr.remove();
+                            updateRowNumbers();
+                        } else {
+                            alert('At least one position is required.');
+                        }
+                    }
+                });
+            }
+
+            if (btnLoadPreset && tbody) {
+                btnLoadPreset.addEventListener('click', function () {
+                    tbody.innerHTML = '';
+                    const presets = [
+                        { title: 'President', winners: 1, maxParty: 1, abstain: true },
+                        { title: 'Vice President', winners: 1, maxParty: 1, abstain: true },
+                        { title: 'Secretary General', winners: 1, maxParty: 1, abstain: true },
+                        { title: 'Treasurer', winners: 1, maxParty: 1, abstain: true },
+                        { title: 'Auditor', winners: 1, maxParty: 1, abstain: true },
+                        { title: 'Public Relations Officer', winners: 1, maxParty: 1, abstain: true },
+                        { title: 'Councilors (Senators)', winners: 6, maxParty: 6, abstain: true }
+                    ];
+
+                    presets.forEach((item, idx) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = createRowHtml(idx + 1, item.title, item.winners, item.maxParty, item.abstain);
+                        tbody.appendChild(tr);
+                    });
+                });
+            }
+
+            // 2. Client-side Search Filtering for Elections Table
+            const searchInput = document.getElementById('electionsSearchInput');
+            const statusFilter = document.getElementById('electionStatusFilter');
+            const tableRows = document.querySelectorAll('#electionsTable tbody tr');
+
+            function filterTable() {
+                const query = (searchInput?.value || '').toLowerCase().trim();
+                const selectedStatus = (statusFilter?.value || 'all').toLowerCase();
+
+                tableRows.forEach(row => {
+                    const text = row.innerText.toLowerCase();
+                    const statusText = row.querySelector('td:nth-child(3)')?.innerText.toLowerCase() || '';
+
+                    const matchesQuery = !query || text.includes(query);
+                    const matchesStatus = selectedStatus === 'all' || statusText.includes(selectedStatus);
+
+                    row.style.display = matchesQuery && matchesStatus ? '' : 'none';
+                });
+            }
+
+            if (searchInput) searchInput.addEventListener('input', filterTable);
+            if (statusFilter) statusFilter.addEventListener('change', filterTable);
+        });
+    </script>
+}
+
