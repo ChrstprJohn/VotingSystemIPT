@@ -176,6 +176,10 @@
                         </ol>
                     </nav>
                 </div>
+
+                <div class="admin-topbar-actions">
+                    @await RenderSectionAsync("TopbarActions", required: false)
+                </div>
             </header>
 
             <!-- Main Page Content -->
