@@ -30,8 +30,17 @@ namespace VotingSystem.Controllers
                 return View(model);
             }
 
-            // TODO: Replace this demo credential check with a real user store / database lookup.
-            if (model.Username != "admin" || model.Password != "admin123")
+            // Mock credential check
+            string role;
+            if (model.Username == "admin" && model.Password == "admin123")
+            {
+                role = "Administrator";
+            }
+            else if (model.Username == "partylistleader" && model.Password == "partylistleader123")
+            {
+                role = "PartylistLeader";
+            }
+            else
             {
                 ModelState.AddModelError(string.Empty, "Invalid username or password.");
                 return View(model);
@@ -40,7 +49,7 @@ namespace VotingSystem.Controllers
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Name, model.Username),
-                new(ClaimTypes.Role, "Administrator")
+                new(ClaimTypes.Role, role)
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -59,7 +68,12 @@ namespace VotingSystem.Controllers
                 return Redirect(returnUrl);
             }
 
-            return RedirectToAction("Index", "Home");
+            if (role == "PartylistLeader")
+            {
+                return RedirectToAction("Index", "Partylists");
+            }
+
+            return RedirectToAction("Index", "Admin");
         }
 
         [HttpPost]
