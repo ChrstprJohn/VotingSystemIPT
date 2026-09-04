@@ -9,6 +9,8 @@ namespace VotingSystem.Controllers
     public class AccountController : Controller
     {
         [HttpGet]
+        [Route("login")]
+        [Route("account/login")]
         public IActionResult Login(string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -16,6 +18,8 @@ namespace VotingSystem.Controllers
         }
 
         [HttpPost]
+        [Route("login")]
+        [Route("account/login")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
         {
@@ -59,6 +63,8 @@ namespace VotingSystem.Controllers
         }
 
         [HttpPost]
+        [Route("logout")]
+        [Route("account/logout")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
