@@ -1,5 +1,19 @@
+:root {
+  /* QCU VotingSystem design tokens */
+  --color-blue-light: #E8F0F8;
+  --color-blue-accent: #5B9FBD;
+  --color-blue-accent-dark: #4A7FA0;
+  --color-blue-dark: #2C3E50;
+  --color-white-dirty: #F5F3F0;
+  --color-gray-soft: #A0A0A0;
+  --color-gray-border: #E0E0E0;
+  --color-white: #FFFFFF;
+}
+
 html {
   font-size: 14px;
+  position: relative;
+  min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,24 +22,62 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
   margin-bottom: 60px;
+  background-color: var(--color-white-dirty);
+  color: var(--color-blue-dark);
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+a {
+  color: var(--color-blue-accent);
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.btn-primary {
+  color: #fff;
+  background-color: var(--color-blue-accent);
+  border-color: var(--color-blue-accent);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--color-blue-accent-dark);
+  border-color: var(--color-blue-accent-dark);
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem #fff, 0 0 0 0.25rem var(--color-blue-accent);
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+  background-color: var(--color-white);
+}
+
+/* Brand / logo */
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--color-blue-dark);
+}
+
+.site-brand__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background-color: var(--color-blue-light);
+  color: var(--color-blue-accent);
+}
+
+.site-brand__text strong {
+  color: var(--color-blue-accent);
 }
