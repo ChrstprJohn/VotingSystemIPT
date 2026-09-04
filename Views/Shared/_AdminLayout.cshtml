@@ -4,27 +4,185 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Admin Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/VotingSystem.styles.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="admin-body">
-    <div class="admin-container">
-        <!-- Admin Header / Navbar or Sidebar placeholder -->
-        <header class="admin-header border-bottom py-3 px-4 bg-dark text-white d-flex justify-content-between align-items-center">
-            <h5 class="m-0">Admin Portal</h5>
-            <div class="d-flex align-items-center gap-2">
-                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-light btn-sm">Exit to Main Site</a>
-                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
-                </form>
+    @{
+        var activePage = ViewData["ActivePage"]?.ToString() ?? "Dashboard";
+        var userName = User?.Identity?.Name ?? "Admin";
+        var userRoleClaim = User?.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+        var displayRole = userRoleClaim switch {
+            "SuperAdmin" => "Super Admin",
+            "ElectionOfficer" => "Election Officer",
+            "PartylistLeader" => "Partylist Leader",
+            _ => !string.IsNullOrEmpty(userRoleClaim) ? userRoleClaim : "Administrator"
+        };
+        var initial = !string.IsNullOrEmpty(userName) ? userName.Substring(0, 1).ToUpper() : "A";
+    }
+    <div class="admin-wrapper">
+        <!-- Left Side: Navigation Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <a asp-controller="Admin" asp-action="Index" class="admin-sidebar-brand">
+                    <span class="admin-brand-title">Admin Portal</span>
+                </a>
             </div>
-        </header>
 
-        <main role="main" class="admin-main p-4">
-            @RenderBody()
-        </main>
+            <div class="admin-nav-section-title">Navigation</div>
+            <ul class="admin-nav-menu">
+                <li class="admin-nav-item">
+                    <a asp-controller="Admin" asp-action="Index" class="admin-nav-link @(activePage == "Dashboard" ? "active" : "")">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a asp-controller="Admin" asp-action="Voters" class="admin-nav-link @(activePage == "Voters" ? "active" : "")">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span>Voters</span>
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a asp-controller="Admin" asp-action="Elections" class="admin-nav-link @(activePage == "Elections" ? "active" : "")">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>Elections</span>
+                    </a>
+                </li>
+                <li class="admin-nav-item">
+                    <a asp-controller="Admin" asp-action="Settings" class="admin-nav-link @(activePage == "Settings" ? "active" : "")">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="admin-sidebar-footer">
+                <div class="dropup w-100">
+                    <button type="button" class="admin-profile-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="admin-avatar">@initial</div>
+                        <div class="admin-user-info">
+                            <div class="admin-user-name">@userName</div>
+                            <div class="admin-user-role">@displayRole</div>
+                        </div>
+                        <svg class="admin-profile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                    </button>
+                    <ul class="dropdown-menu admin-user-dropdown">
+                        <li class="dropdown-header">
+                            <span class="d-block fw-semibold text-dark">@userName</span>
+                            <span class="d-block text-muted small">@displayRole</span>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a asp-controller="Home" asp-action="Index" class="dropdown-item d-flex align-items-center gap-2">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                                <span>Public Portal</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="Admin" asp-action="Settings" class="dropdown-item d-flex align-items-center gap-2">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                </svg>
+                                <span>Account Settings</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item dropdown-item-danger d-flex align-items-center gap-2 w-100 text-start">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                        <polyline points="16 17 21 12 16 7"></polyline>
+                                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                                    </svg>
+                                    <span>Log out</span>
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Side: Header & Page Content -->
+        <div class="admin-main-wrap">
+            <!-- Topbar Header -->
+            <header class="admin-topbar">
+                <div class="admin-topbar-left">
+                    <button type="button" class="admin-sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar" title="Toggle Sidebar">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                            <path d="M9 3v18"></path>
+                        </svg>
+                    </button>
+
+                    <div class="admin-topbar-divider"></div>
+
+                    <nav class="admin-breadcrumbs" aria-label="Breadcrumb">
+                        <ol class="admin-breadcrumb-list">
+                            <li class="admin-breadcrumb-item @(activePage == "Dashboard" ? "active" : "")">
+                                @if (activePage == "Dashboard")
+                                {
+                                    <span>Dashboard</span>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Admin" asp-action="Index" class="admin-breadcrumb-link">Dashboard</a>
+                                }
+                            </li>
+                            @if (activePage != "Dashboard")
+                            {
+                                <li class="admin-breadcrumb-separator" aria-hidden="true">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="9 18 15 12 9 6"></polyline>
+                                    </svg>
+                                </li>
+                                <li class="admin-breadcrumb-item active" aria-current="page">
+                                    @ViewData["Title"]
+                                </li>
+                            }
+                        </ol>
+                    </nav>
+                </div>
+            </header>
+
+            <!-- Main Page Content -->
+            <main role="main" class="admin-content">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
