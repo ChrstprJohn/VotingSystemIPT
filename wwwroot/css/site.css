@@ -1,31 +1,72 @@
-html {
-  font-size: 14px;
+/* ==========================================================================
+   Master Stylesheet (Entry Point)
+   ========================================================================== */
+
+/* 0. Geist Font Family */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap");
+
+/* 1. Base Layer (Design tokens & resets) */
+@import url("base/variables.css");
+@import url("base/reset.css");
+
+/* 2. Components Layer (Reusable components across all pages) */
+@import url("components/navbar.css");
+@import url("components/footer.css");
+@import url("pages/admin.css");
+
+/* 3. Global Form & Button Utilities */
+.btn-primary {
+  color: #fff;
+  background-color: var(--color-blue-accent);
+  border-color: var(--color-blue-accent);
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--color-blue-accent-dark);
+  border-color: var(--color-blue-accent-dark);
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem #fff, 0 0 0 0.25rem var(--color-blue-accent);
 }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+  color: var(--color-text-muted);
   text-align: end;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+/* 4. Brand / Logo Utilities */
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--color-blue-dark);
+}
+
+.site-brand__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background-color: var(--color-blue-light);
+  color: var(--color-blue-accent);
+}
+
+.site-brand__text strong {
+  color: var(--color-blue-accent);
 }

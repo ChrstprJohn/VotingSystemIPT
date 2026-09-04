@@ -1,0 +1,29 @@
+@model VotingSystem.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Log in";
+    Layout = "_LayoutAuth";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/login.css" asp-append-version="true" />
+}
+
+<div class="login-page">
+    <partial name="LoginPartials/_BrandPanel" model="Model" />
+    <partial name="LoginPartials/_LoginForm" model="Model" />
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('[data-password-toggle]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var field = btn.parentElement.querySelector('.login-input__field');
+                var show = field.type === 'password';
+                field.type = show ? 'text' : 'password';
+                btn.classList.toggle('is-visible', show);
+                btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+            });
+        });
+    </script>
+}

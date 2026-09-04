@@ -40,13 +40,22 @@ This document defines the client-facing technologies and libraries currently ins
 
 ---
 
-## 3. Custom Styling: Vanilla CSS
-- **Primary File**: `wwwroot/css/site.css`
-- **Scoped Styles**: `VotingSystem.styles.css` (ASP.NET Core CSS Isolation)
+## 3. Custom Styling: Modular Vanilla CSS (Option 1 Standard)
+- **Primary Master File**: `wwwroot/css/site.css` (central entry point importing base and component layers)
+- **Base Layer (`wwwroot/css/base/`)**:
+  - `variables.css`: Design tokens (CSS custom properties for colors, typography, spacing, radius, elevation).
+  - `reset.css`: Global resets, box-sizing, and typography defaults.
+- **Components Layer (`wwwroot/css/components/`)**:
+  - `navbar.css`: Navigation bar styling.
+  - `footer.css`: Global footer styling.
+  - Additional reusable component styles (buttons, cards, forms).
+- **Pages Layer (`wwwroot/css/pages/`)**:
+  - View-specific stylesheets (e.g., `home.css`) injected via `@section Styles` in Razor views.
+- **Scoped Styles**: `VotingSystem.styles.css` (ASP.NET Core native CSS Isolation support).
 - **Usage**:
-  - Overrides Bootstrap styles.
-  - Custom design tokens, color schemes, typography, card layouts, animations, and transitions.
-  - Modern CSS features: CSS Grid, Flexbox, CSS Custom Properties (Variables), and Media Queries.
+  - Overrides Bootstrap styles while preserving responsive grid utilities.
+  - Consistent design tokens and CSS custom properties (`var(--color-primary)`).
+  - Modern CSS features: Flexbox, CSS Grid, custom properties, and transitions.
 
 ---
 

@@ -1,0 +1,29 @@
+<!-- Toolbar: Search, Filters & Actions -->
+<div class="voters-toolbar">
+    <div class="voters-search-box">
+        <svg class="voters-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" class="voters-search-input" id="electionsSearchInput" placeholder="Search election title, academic year, scope..." />
+    </div>
+
+    <div class="voters-filter-group">
+        <select class="form-select form-select-sm voters-filter-select" id="electionStatusFilter">
+            <option value="all">All Statuses</option>
+            <option value="ongoing">Ongoing (Live)</option>
+            <option value="preparation">Preparation (Draft)</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+        </select>
+
+        <button type="button" class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1 px-3 py-1.5 fw-medium" data-bs-toggle="modal" data-bs-target="#createElectionModal">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Create Election</span>
+        </button>
+    </div>
+</div>

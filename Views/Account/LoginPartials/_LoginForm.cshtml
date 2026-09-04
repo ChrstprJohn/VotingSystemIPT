@@ -1,0 +1,61 @@
+@model VotingSystem.Models.LoginViewModel
+
+<section class="login-form-panel">
+    <div class="login-card">
+        <div class="login-card__body">
+            <h2 class="login-card__title">Admin Log in</h2>
+            <p class="login-card__subtitle">Sign in to access your account</p>
+
+            <form asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+                <div asp-validation-summary="ModelOnly" class="login-alert" role="alert"></div>
+
+                <div class="login-field">
+                    <label asp-for="Username" class="login-label"></label>
+                    <div class="login-input">
+                        <span class="login-input__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.7" />
+                                <path d="M5 20c0-3.3 3.1-5.5 7-5.5s7 2.2 7 5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <input asp-for="Username" class="login-input__field" placeholder="Enter your username" autocomplete="username" autofocus />
+                    </div>
+                    <span asp-validation-for="Username" class="login-error"></span>
+                </div>
+
+                <div class="login-field">
+                    <label asp-for="Password" class="login-label"></label>
+                    <div class="login-input">
+                        <span class="login-input__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="5" y="10.5" width="14" height="9.5" rx="2" stroke="currentColor" stroke-width="1.7" />
+                                <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <input asp-for="Password" class="login-input__field" placeholder="Enter your password" autocomplete="current-password" />
+                        <button type="button" class="login-input__toggle" data-password-toggle aria-label="Show password">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7" />
+                            </svg>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="login-error"></span>
+                </div>
+
+                <div class="login-row">
+                    <label class="login-check">
+                        <input asp-for="RememberMe" />
+                        <span>Remember me</span>
+                    </label>
+                    <a class="login-link" href="#">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="login-submit">Sign In</button>
+            </form>
+        </div>
+        <div class="login-card__footer">
+            &copy; @DateTime.Now.Year QCU VotingSystem. All rights reserved.
+        </div>
+    </div>
+</section>
