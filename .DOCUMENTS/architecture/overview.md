@@ -48,6 +48,11 @@ VotingSystem/
 ├── Models/              # Domain models (BSON entities) & ViewModels
 ├── Services/            # MongoDB data access and business services
 ├── Views/               # Razor templates (.cshtml)
+│   ├── Account/         # Views specific to AccountController
+│   │   ├── Login.cshtml # Login orchestrator view
+│   │   └── LoginPartials/ # Login section partial views
+│   │       ├── _BrandPanel.cshtml
+│   │       └── _LoginForm.cshtml
 │   ├── Home/            # Views specific to HomeController
 │   │   ├── Index.cshtml # Main page (Orchestrator view)
 │   │   ├── About.cshtml
@@ -56,8 +61,9 @@ VotingSystem/
 │   │       ├── _Hero.cshtml
 │   │       ├── _Features.cshtml
 │   │       └── _CTA.cshtml
-│   └── Shared/          # Shared views (_Layout.cshtml, _Navbar.cshtml, _Footer.cshtml, _ValidationScriptsPartial.cshtml)
+│   └── Shared/          # Shared views (_Layout.cshtml, _LayoutAuth.cshtml, _Navbar.cshtml, _Footer.cshtml, _ValidationScriptsPartial.cshtml)
 │       ├── _Layout.cshtml
+│       ├── _LayoutAuth.cshtml
 │       ├── _Navbar.cshtml
 │       └── _Footer.cshtml
 ├── wwwroot/             # Static web assets
