@@ -1,438 +1,322 @@
 # CLAUDE.md
-# Minimalistic Design System with Local Fonts
+# QCU VotingSystem — Front-End Design System
+
+This file documents the design system **as actually implemented** in this
+ASP.NET Core MVC project. It is derived from `wwwroot/css/site.css` (global
+tokens and base styles) and `wwwroot/css/Login.css` (the admin login screen,
+the first fully styled page). Keep this file in sync with those files — if a
+rule here and the CSS disagree, the CSS is the source of truth and this file
+should be corrected.
 
 ## Project Structure
 ```
-project-root/
-├── CLAUDE.md
-├── fonts/
-│   ├── inter-regular.woff2
-│   ├── inter-semibold.woff2
-│   ├── inter-bold.woff2
-│   ├── playfair-display-regular.woff2
-│   └── playfair-display-bold.woff2
-├── styles/
-│   └── global.css (shared by all pages)
+VotingSystemIPT/
+├── wwwroot/
+│   ├── CLAUDE.md              <- this file
+│   ├── css/
+│   │   ├── site.css           <- :root design tokens + global base styles (loaded on every page)
+│   │   └── Login.css          <- page-specific styles for the admin login screen
+│   ├── js/
+│   │   └── site.js
+│   ├── lib/                   <- client libraries restored by libman (bootstrap, jquery, ...)
+│   └── favicon.ico
+├── Views/
+│   ├── Account/
+│   │   └── Login.cshtml       <- consumes Login.css via @section Styles
+│   └── Shared/
+│       └── _LayoutAuth.cshtml <- auth layout: loads bootstrap.min.css, site.css, VotingSystem.styles.css
+├── Controllers/
+├── Models/
+└── Program.cs
 ```
 
+There is **no `fonts/` folder and no `styles/global.css`**. Global tokens and
+base element styles live in `wwwroot/css/site.css`. Bootstrap 5 is loaded
+before `site.css`, so `site.css` (and any page CSS) overrides Bootstrap.
+
+---
+
+## Fonts
+
+**Use the native system font stack. Do not add Google Fonts, other font CDNs,
+or bundled font files.** There is no local font pipeline in this project.
+
+```css
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+             "Helvetica Neue", Arial, sans-serif;
+```
+
+- All text is this one sans-serif stack. There is no separate display/serif face.
+- Weights in use: **400** (regular), **600** (semibold), **700** (bold).
+  Avoid 300 and 500.
+- Root font size is set on `html` in `site.css`: **14px**, rising to **16px**
+  at `min-width: 768px`. Because of this, always size type and spacing in
+  `rem`, not `px`, so both breakpoints scale correctly.
+
+---
+
 ## Color Palette
-**NEVER use Google Fonts or external font CDNs. Download fonts and store locally in /fonts/**
 
-### Primary Colors
-- **Light Blue:** #E8F0F8 (very light, almost off-white with blue tint)
-- **Light Blue (accent):** #5B9FBD (muted, professional blue)
-- **Dirty White:** #F5F3F0 (warm off-white, slightly gray undertone)
-- **Deep Blue:** #2C3E50 (dark blue-gray for text and accents)
+### Design tokens (defined in `wwwroot/css/site.css` `:root`)
+```css
+:root {
+  --color-blue-light:        #E8F0F8;  /* very light blue tint */
+  --color-blue-accent:       #5B9FBD;  /* primary accent / links / focus ring */
+  --color-blue-accent-dark:  #4A7FA0;  /* accent hover / gradient end / active */
+  --color-blue-dark:         #2C3E50;  /* primary text, dark UI */
+  --color-white-dirty:       #F5F3F0;  /* warm page background */
+  --color-gray-soft:         #A0A0A0;  /* secondary text, disabled */
+  --color-gray-border:       #E0E0E0;  /* borders, dividers */
+  --color-white:             #FFFFFF;  /* cards, overlays */
+}
+```
 
-### Secondary Colors
-- **Soft Gray:** #A0A0A0 (for secondary text, disabled states)
-- **Light Gray:** #E0E0E0 (for borders and dividers)
-- **White:** #FFFFFF (for overlays and special cases only)
+**Always reference these via `var(--token)` for the core brand blues,
+backgrounds, and borders.** Do not reintroduce brand hexes like `#5B9FBD`
+literally in component CSS.
 
-### Text Colors
-- **Primary Text:** #2C3E50 (deep blue-gray on light backgrounds)
-- **Secondary Text:** #A0A0A0 (soft gray for captions, metadata)
-- **Accent Text:** #5B9FBD (light blue for links, highlights)
+### Supporting neutrals and semantic colors (used in `Login.css`)
+The login screen needed a finer neutral ramp and a couple of gradients than the
+eight core tokens provide. These are currently allowed as literals in
+page-level CSS. If a value below starts appearing on a second page, promote it
+to a `--token` in `site.css` first.
 
-### Usage Rules
-- Background: Dirty White (#F5F3F0) or Light Blue (#E8F0F8)
-- Cards/Sections: White (#FFFFFF) or Light Blue (#E8F0F8)
-- Buttons: Light Blue accent (#5B9FBD) background
-- Borders: Light Gray (#E0E0E0) — never use dark colors
-- Text: Deep Blue (#2C3E50)
+| Purpose                        | Value                                            |
+|--------------------------------|--------------------------------------------------|
+| Muted page backdrop            | `#f0f2f5`, `#f8fafc`                              |
+| Neutral text (labels, meta)    | `#334155`, `#475569`, `#64748b`                   |
+| Neutral icon / placeholder     | `#94a3b8`                                         |
+| Neutral borders / hairlines    | `#e2e8f0`, `#eef1f5`                              |
+| Error text / validation        | `#dc2626`                                         |
+| Accent-on-dark (brand panel)   | `#9ec9db`                                         |
+| Brand-panel gradient stops     | `#24435f`, `#2c3e50`, `#1b2c3d`                   |
+
+### Gradients
+Gradients **are permitted** for large brand surfaces and the primary call to
+action. Two are in use:
+- Brand panel: `linear-gradient(135deg, #24435f 0%, #2c3e50 50%, #1b2c3d 100%)`
+- Primary submit button:
+  `linear-gradient(to right, var(--color-blue-accent) 0%, var(--color-blue-accent-dark) 100%)`
+
+Do not add gradients to small elements, cards, inputs, or body backgrounds.
+
+### Usage rules
+- Page background: `--color-white-dirty` (global) or a light neutral (`#f0f2f5`) for full-bleed screens.
+- Cards / panels: `--color-white`.
+- Primary button: accent → accent-dark gradient, white text.
+- Links & focus rings: `--color-blue-accent`.
+- Borders: `--color-gray-border` globally; the finer `#e2e8f0` hairline is acceptable inside a styled card.
+- Body text: `--color-blue-dark`. Secondary text: a slate neutral (`#64748b`) or `--color-gray-soft`.
 
 ---
 
-## Typography
+## Typography Scale
 
-### Font System (LOCAL ONLY - NO GOOGLE FONTS CDN)
-- **Display/Headings:** Playfair Display (elegant, serif, distinctive)
-  - File: playfair-display-regular.woff2, playfair-display-bold.woff2
-- **Body/UI:** Inter (clean, readable, sans-serif)
-  - Files: inter-regular.woff2, inter-semibold.woff2, inter-bold.woff2
+Sizes are `rem` against the 14/16px root. Values seen in `Login.css`:
 
-### Font Sizes & Weights
-- **h1 (Hero/Page Title):** Playfair Display Bold, 56px / 3.5rem, line-height 1.2
-- **h2 (Section Title):** Playfair Display Bold, 40px / 2.5rem, line-height 1.3
-- **h3 (Subsection):** Playfair Display Regular, 32px / 2rem, line-height 1.3
-- **Body Text:** Inter Regular, 16px / 1rem, line-height 1.6
-- **Small Text/Caption:** Inter Regular, 14px / 0.875rem, line-height 1.5
-- **Button Text:** Inter Semibold, 16px / 1rem
-- **Navigation:** Inter Semibold, 16px / 1rem
+| Role                         | Size                | Weight | Notes                       |
+|------------------------------|---------------------|--------|-----------------------------|
+| Brand hero title             | `3rem`              | 700    | brand panel only            |
+| Card title (`h1`/`h2`)       | `1.75rem`           | 700    |                             |
+| Brand subtitle               | `1.5rem`            | 600    |                             |
+| Body / paragraph             | `1rem`              | 400    | line-height ~1.6            |
+| Label / small UI text        | `0.875rem`          | 600    | form labels, feature titles |
+| Sub-label / helper           | `0.9375rem`         | 400/600| card subtitle, button text  |
+| Caption / footer / error     | `0.8125rem`–`0.75rem` | 400  | footer, validation messages |
 
-### Font Weight Rules
-- Use only: 400 (Regular), 600 (Semibold), 700 (Bold)
-- Never use 300 or 500 — too thin or awkward
+Line-height: ~1.1–1.3 for large headings, ~1.5–1.6 for body and descriptions.
 
 ---
 
-## Spacing System (8px Grid)
-- **xs:** 4px (0.25rem) — for tiny gaps
-- **sm:** 8px (0.5rem) — button padding
-- **md:** 16px (1rem) — standard spacing
-- **lg:** 24px (1.5rem) — section padding, card padding
-- **xl:** 32px (2rem) — between major sections
-- **2xl:** 48px (3rem) — large gaps, hero sections
-- **3xl:** 64px (4rem) — very large section breaks
+## Spacing
 
-Use these consistently in padding, margins, gaps. **NEVER use random values like 15px, 22px, etc.**
+Spacing is expressed in `rem`, in **quarter-rem (0.25rem / 4px) increments**.
+Common step values in use: `0.25`, `0.375`, `0.5`, `0.625`, `1`, `1.125`,
+`1.25`, `1.5`, `1.75`, `2`, `2.5`, `3rem`. Fixed-height controls use `px`
+(`44px` inputs, `46px` submit, `72px` logo box).
+
+- Reuse an existing step rather than inventing a new one.
+- Keep vertical rhythm consistent between sibling components (e.g. every
+  `.login-field` has the same `margin-bottom`).
+- The strict "8px grid only" rule from earlier versions of this file does
+  **not** apply; quarter-rem steps are the real unit.
+
+---
+
+## Border Radius
+
+| Element                              | Radius   |
+|--------------------------------------|----------|
+| Large cards, brand logo box          | `16px`   |
+| Inputs, primary buttons              | `8px`    |
+| Feature boxes / secondary panels     | `12px`   |
+| Small icon buttons / toggles         | `6px`    |
+
+Use the same radius for elements of the same kind.
+
+---
+
+## Elevation (shadows)
+
+Shadows **are used** in this project for elevated surfaces — the earlier
+"NO SHADOWS" rule no longer applies. Keep them soft and blue-neutral.
+
+| Use                     | Shadow                                                                 |
+|-------------------------|-----------------------------------------------------------------------|
+| Elevated card           | `0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.1)`      |
+| Floating badge / logo   | `0 10px 30px rgba(0,0,0,.25)`                                          |
+| Primary button (rest)   | `0 10px 15px -3px rgba(44,62,80,.2)`                                   |
+| Primary button (hover)  | `0 14px 20px -3px rgba(44,62,80,.28)`                                  |
+| Focus ring              | `0 0 0 3px rgba(91,159,189,.2)` (accent at low alpha)                  |
+
+Do not put shadows on inputs at rest, hairline dividers, or body-level elements.
 
 ---
 
 ## Component Standards
 
-### Buttons
+Class naming follows a **BEM-ish** convention scoped by page/feature prefix:
+`block`, `block__element`, `block--modifier`, plus state classes like
+`is-visible`. Example from the login screen: `login-card`,
+`login-card__body`, `login-input__field`, `login-input__toggle.is-visible`.
+
+### Primary button
 ```css
-.button {
-  background-color: var(--color-blue-accent);
-  color: #FFFFFF;
-  padding: 12px 24px; /* sm lg */
-  border: none;
-  border-radius: 6px;
-  font-family: var(--font-body);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.button:hover {
-  background-color: #4A7FA0; /* slightly darker */
-}
-
-.button--secondary {
-  background-color: var(--color-gray-light);
-  color: var(--color-text-primary);
-}
-```
-
-### Cards
-```css
-.card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--color-gray-border);
+.login-submit {
+  width: 100%;
+  height: 46px;
+  border: 0;
   border-radius: 8px;
-  padding: 24px; /* lg */
-  box-shadow: none; /* NO SHADOWS */
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(to right, var(--color-blue-accent) 0%, var(--color-blue-accent-dark) 100%);
+  box-shadow: 0 10px 15px -3px rgba(44, 62, 80, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.login-submit:hover  { filter: brightness(0.96); transform: scale(1.01); }
+.login-submit:active { transform: scale(0.99); }
+```
+Global Bootstrap buttons are themed in `site.css` via `.btn-primary`
+(solid `--color-blue-accent`, hover `--color-blue-accent-dark`).
+
+### Card
+```css
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 1px solid rgba(226, 232, 240, 0.7);
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 ```
 
-### Navigation
+### Form input (icon-prefixed)
 ```css
-nav {
-  background-color: var(--color-white-dirty);
-  border-bottom: 1px solid var(--color-gray-border);
-  padding: 16px 24px; /* md lg */
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-nav a {
-  color: var(--color-text-primary);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-nav a:hover {
-  color: var(--color-blue-accent);
-}
-```
-
-### Form Inputs
-```css
-input, textarea, select {
-  border: 1px solid var(--color-gray-border);
-  border-radius: 6px;
-  padding: 12px 16px;
-  font-family: var(--font-body);
-  font-size: 1rem;
-  background-color: #FFFFFF;
-  color: var(--color-text-primary);
-}
-
-input:focus, textarea:focus {
+.login-input__field {
+  width: 100%;
+  height: 44px;
+  padding: 10px 12px 10px 40px;      /* left room for the leading icon */
+  font-size: 0.875rem;
+  color: var(--color-blue-dark);
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
   outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.login-input__field:focus {
   border-color: var(--color-blue-accent);
-  box-shadow: 0 0 0 3px rgba(91, 159, 189, 0.1);
+  box-shadow: 0 0 0 3px rgba(91, 159, 189, 0.2);
 }
 ```
+Inputs sit in a `.login-input` flex wrapper that positions an
+absolute `.login-input__icon` on the left and an optional
+`.login-input__toggle` (password show/hide) on the right.
 
-### Sections
-```css
-section {
-  padding: 48px 24px; /* 3xl lg */
-  background-color: var(--color-white-dirty);
-}
-
-section.alt {
-  background-color: var(--color-blue-light);
-}
-```
+### Validation / errors
+- `<span asp-validation-for="...">` gets `.login-error` — `0.8125rem`, `#dc2626`.
+- `<div asp-validation-summary="ModelOnly">` gets `.login-alert` — hidden when
+  `:empty`, `role="alert"`.
 
 ---
 
-## Design Rules (CRITICAL - FOLLOW EVERY PAGE)
+## Layout Rules
 
-### Color Rules
-- ✅ **DO:** Use CSS variables for all colors (defined in global.css :root)
-- ❌ **DON'T:** Hardcode hex values like `#5B9FBD` in component files
-- ✅ **DO:** Stick to the 5-color palette (light blue, dirty white, deep blue, soft gray, light gray)
-- ❌ **DON'T:** Add new colors or gradients
+- Full-screen auth pages use a **split layout**: `.login-page` is a flex row;
+  a brand panel (`flex: 0 0 60%`) on the left and a centered form panel on the
+  right.
+- The brand panel is **hidden below `992px`** (`display: none`, shown again in
+  `@media (min-width: 992px)`); the form panel is always full-width-friendly
+  with a `max-width` card.
+- Content cards cap at a `max-width` (login card: `420px`) and center with
+  flexbox on the panel.
+- Use flexbox / grid for layout; mobile-first.
 
-### Font Rules
-- ✅ **DO:** Use Playfair Display ONLY for h1, h2, h3 (headings)
-- ✅ **DO:** Use Inter ONLY for body, buttons, navigation
-- ❌ **DON'T:** Mix fonts within the same page
-- ❌ **DON'T:** Use system fonts or fallbacks — fonts are stored locally in /fonts/
-- ✅ **DO:** Load fonts once in global.css using @font-face with local files
-
-### Spacing Rules
-- ✅ **DO:** Use multiples of 8px (4, 8, 16, 24, 32, 48, 64)
-- ❌ **DON'T:** Use arbitrary values like 15px, 22px, 35px
-- ✅ **DO:** Use consistent padding/margin across all cards and sections
-- ❌ **DON'T:** Add different spacing to similar components
-
-### Shadow Rules
-- ✅ **DO:** Use subtle, minimal shadows if needed: `box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);`
-- ❌ **DON'T:** Use heavy drop shadows or dark shadows
-- ✅ **DO:** Use borders (1px light gray) instead of shadows for definition
-
-### Border Radius Rules
-- **Cards & buttons:** 6px–8px
-- **Inputs:** 6px
-- **Large sections:** 0px (square corners) or 12px (for prominent cards)
-- ❌ **DON'T:** Use different border-radius values for similar components
-
-### Layout Rules
-- ✅ **DO:** Use max-width: 1200px for content on large screens
-- ✅ **DO:** Center content with margin: 0 auto
-- ✅ **DO:** Use CSS Grid or Flexbox for layouts
-- ✅ **DO:** Implement mobile-first responsive design
-- Breakpoints: 640px (sm), 1024px (md), 1280px (lg)
-
-### Dark Mode (Optional but Recommended)
-- If implementing dark mode, use CSS media query: `@media (prefers-color-scheme: dark)`
-- Swap background colors but keep the same accent colors
+### Breakpoints (Bootstrap 5 scale — this project uses these, not 640/1024/1280)
+- `768px`  — root font-size step (`site.css`)
+- `992px`  — show/hide the brand panel; Bootstrap `lg`
+- `991.98px` — max-width companion query when needed
 
 ---
 
-## Global CSS Structure (styles/global.css)
+## Adding a Styled Page
 
-**Every page MUST import this file:**
-```html
-<link rel="stylesheet" href="../styles/global.css">
-```
-
-The file should include:
-1. @font-face declarations for Playfair Display and Inter (from /fonts/)
-2. CSS custom properties (:root) with all colors and spacing variables
-3. Base styles for HTML elements (body, h1-h6, p, a, button, form elements)
-4. Utility classes (.text-center, .text-small, .flex, .grid, etc.)
-5. Common component styles (.card, .button, .section, nav, etc.)
-6. Responsive utilities for mobile/tablet/desktop
-7. Print styles (optional)
-
-**IMPORTANT:** global.css is shared by ALL pages. Changes here affect the entire site.
-
----
-
-## Font Loading (LOCAL FILES - CRITICAL)
-
-In global.css, load fonts from the /fonts/ directory:
-
-```css
-@font-face {
-  font-family: 'Playfair Display';
-  src: url('../fonts/playfair-display-regular.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Playfair Display';
-  src: url('../fonts/playfair-display-bold.woff2') format('woff2');
-  font-weight: 700;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('../fonts/inter-regular.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('../fonts/inter-semibold.woff2') format('woff2');
-  font-weight: 600;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('../fonts/inter-bold.woff2') format('woff2');
-  font-weight: 700;
-  font-display: swap;
-}
-```
-
----
-
-## CSS Variables (in :root in global.css)
-
-```css
-:root {
-  /* Colors */
-  --color-blue-light: #E8F0F8;
-  --color-blue-accent: #5B9FBD;
-  --color-blue-dark: #2C3E50;
-  --color-white-dirty: #F5F3F0;
-  --color-gray-soft: #A0A0A0;
-  --color-gray-border: #E0E0E0;
-  --color-white: #FFFFFF;
-
-  /* Fonts */
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'Inter', sans-serif;
-
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-2xl: 3rem;
-  --spacing-3xl: 4rem;
-
-  /* Typography */
-  --font-size-xs: 0.875rem;
-  --font-size-sm: 1rem;
-  --font-size-md: 1.25rem;
-  --font-size-lg: 2rem;
-  --font-size-xl: 2.5rem;
-  --font-size-2xl: 3.5rem;
-
-  /* Border Radius */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-}
-```
+1. Create the Razor view under `Views/<Area>/<Name>.cshtml` and set its
+   `Layout` (auth pages use `_LayoutAuth`).
+2. If the page needs its own CSS, add `wwwroot/css/<Name>.css` and pull it in
+   from the view — do **not** add it to the layout:
+   ```cshtml
+   @section Styles {
+       <link rel="stylesheet" href="~/css/<Name>.css" asp-append-version="true" />
+   }
+   ```
+3. In that CSS, prefix every class with the page/feature name (`<name>-...`),
+   reference `var(--color-*)` tokens for brand colors, and reuse the radius,
+   spacing, and shadow values documented above.
+4. Any page-specific JS goes in `@section Scripts` after the validation
+   partial (see `Login.cshtml`'s password-toggle handler).
 
 ---
 
 ## Common Mistakes to AVOID
 
-- ❌ **Hardcoded hex colors** — Use CSS variables ONLY
-- ❌ **Google Fonts CDN** — Download fonts and store in /fonts/ locally
-- ❌ **Different font families per page** — Always Playfair + Inter
-- ❌ **Random spacing values** — Use 8px multiples ONLY
-- ❌ **Drop shadows** — Use borders and subtle shadows only
-- ❌ **Multiple button styles** — One .button class for consistency
-- ❌ **Different card designs** — One .card style for all cards
-- ❌ **Inconsistent navigation** — Same nav style on every page
-- ❌ **Not importing global.css** — Every page MUST link it
-- ❌ **New colors not in palette** — Stick to the 5 core colors
-
----
-
-## File Checklist for Every Page
-
-Before submitting any page, verify:
-- ✅ global.css is imported in `<head>`
-- ✅ All colors use CSS variables
-- ✅ Only Playfair Display for headings
-- ✅ Only Inter for body and UI
-- ✅ Spacing is 8px multiples
-- ✅ No hardcoded hex values
-- ✅ Navigation is consistent
-- ✅ Buttons use .button class
-- ✅ Cards use .card class
-- ✅ Forms have proper labels and focus states
-- ✅ Mobile responsive (tested at 640px, 1024px, 1280px)
-- ✅ No external font CDNs
-
----
-
-## Example: How to Create a New Page
-
-1. Create `/pages/newpage.html`
-2. Copy this template:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page Title</title>
-  <link rel="stylesheet" href="../styles/global.css">
-</head>
-<body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-  </nav>
-
-  <main>
-    <section>
-      <h1>Page Heading</h1>
-      <p>Body text goes here...</p>
-    </section>
-
-    <section class="alt">
-      <h2>Section Title</h2>
-      <div class="card">
-        <p>Card content</p>
-      </div>
-    </section>
-
-    <section>
-      <button class="button">Call to Action</button>
-    </section>
-  </main>
-
-  <footer>
-    <p>&copy; 2024. All rights reserved.</p>
-  </footer>
-</body>
-</html>
-```
-
----
-
-## Design Inspiration & References
-
-- **Aesthetic:** Minimalistic, professional, corporate-tech
-- **Feel:** Clean, calm, trustworthy (light blue + dirty white creates a serene, professional vibe)
-- **Inspiration Sites:** Stripe.com, Linear.app, Notion.so (minimal, elegant, professional)
-- **Typography Pairing:** Playfair Display (editorial elegance) + Inter (modern, clean)
+- ❌ Adding Google Fonts / font CDNs / bundled font files — this project uses the system stack only.
+- ❌ Referencing `styles/global.css` or a `/fonts/` folder — they do not exist; tokens are in `wwwroot/css/site.css`.
+- ❌ Hardcoding brand blues (`#5B9FBD`, `#2C3E50`, …) instead of `var(--color-*)`.
+- ❌ Sizing type/spacing in `px` — the root font-size changes at 768px, so use `rem`.
+- ❌ Inventing new spacing values outside the quarter-rem steps already in use.
+- ❌ Mixing radius values on the same kind of element (pick 6 / 8 / 12 / 16).
+- ❌ Putting page CSS in `_LayoutAuth.cshtml` instead of the view's `@section Styles`.
+- ❌ Dropping the `.login-alert:empty { display: none }` guard or the `role="alert"`.
+- ❌ Adding gradients to small elements — they are for the brand panel and the primary CTA only.
 
 ---
 
 ## Quick Reference
 
-| Element | Color | Font | Size | Spacing |
-|---------|-------|------|------|---------|
-| h1 | Deep Blue | Playfair Bold | 3.5rem | 48px top/bottom |
-| h2 | Deep Blue | Playfair Bold | 2.5rem | 32px top/bottom |
-| Body | Deep Blue | Inter Regular | 1rem | 16px line-height |
-| Link | Light Blue Accent | Inter Regular | 1rem | — |
-| Button | Light Blue Bg / White Text | Inter Semibold | 1rem | 12px 24px |
-| Card | White / Light Blue Border | — | — | 24px padding |
-| Section | Dirty White or Light Blue | — | — | 48px padding |
-| Navigation | Dirty White | Inter Semibold | 1rem | 16px 24px |
+| Element        | Color                              | Size / weight        | Radius | Notes                    |
+|----------------|------------------------------------|----------------------|--------|--------------------------|
+| Page bg        | `--color-white-dirty` / `#f0f2f5`  | —                    | —      | full-bleed auth screens  |
+| Card           | `--color-white`                    | —                    | 16px   | soft double shadow       |
+| Card title     | `--color-blue-dark`                | 1.75rem / 700        | —      |                          |
+| Body text      | `--color-blue-dark`                | 1rem / 400           | —      | line-height ~1.6         |
+| Secondary text | `#64748b` / `--color-gray-soft`    | 0.875–0.9375rem / 400| —      |                          |
+| Label          | `#334155`                          | 0.875rem / 600       | —      |                          |
+| Input          | text `--color-blue-dark`, bg `#f8fafc`, border `#e2e8f0` | 0.875rem / 400 | 8px | 44px tall, focus = accent ring |
+| Primary button | accent→accent-dark gradient, `#fff`| 0.9375rem / 700      | 8px    | 46px tall, lift on hover |
+| Link           | `--color-blue-accent`              | 0.875rem / 600       | —      | underline on hover       |
+| Error text     | `#dc2626`                          | 0.8125rem / 400      | —      |                          |
+| Footer         | `#94a3b8` on `#f8fafc`             | 0.75rem / 400        | —      | top hairline `#eef1f5`   |
 
 ---
 
-## Support
+## Notes
 
-If Claude ever breaks these rules:
-- Type: `@CLAUDE.md Please follow the design system in CLAUDE.md`
-- Or: `Review CLAUDE.md and rebuild this page with proper colors, fonts, and spacing`
-
-This ensures consistency across your entire website, every page, every time.
+- The login logo is a placeholder inline SVG (see the comment in
+  `Views/Account/Login.cshtml`); a real QCU mark will replace it later.
+- The global brand mark styles (`.site-brand`, `.site-brand__mark`) live in
+  `site.css` and are the pattern to follow for header branding on other pages.
