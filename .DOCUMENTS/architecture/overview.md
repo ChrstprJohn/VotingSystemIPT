@@ -49,6 +49,11 @@ VotingSystem/
 ├── Services/            # MongoDB data access and business services
 ├── Views/               # Razor templates (.cshtml)
 │   ├── Home/            # Views specific to HomeController
+│   │   ├── Index.cshtml # Main page (Orchestrator view)
+│   │   └── IndexPartials/ # Feature-scoped partial views
+│   │       ├── _Hero.cshtml
+│   │       ├── _Features.cshtml
+│   │       └── _CTA.cshtml
 │   └── Shared/          # Shared views (_Layout.cshtml, _ValidationScriptsPartial.cshtml)
 ├── wwwroot/             # Static web assets
 │   ├── css/             # Custom stylesheets (site.css)

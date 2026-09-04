@@ -20,6 +20,10 @@ This document outlines best practices for C#, Razor Views, and CSS in this proje
 
 ## 2. Razor View Guidelines (`.cshtml`)
 - **Strongly-Typed Views**: Always declare `@model YourNamespace.Models.YourViewModel` at the top of views to gain compile-time checks and autocomplete.
+- **Orchestrator & Partial View Pattern**:
+  - Keep main views (`Index.cshtml`) clean by treating them as **orchestrators**.
+  - Break down discrete sections into a dedicated `{Action}Partials/` subdirectory (e.g. `IndexPartials/_Hero.cshtml`, `IndexPartials/_Features.cshtml`).
+  - Reference partials via the Tag Helper: `<partial name="IndexPartials/_PartialName" />`.
 - **Tag Helpers**: Prefer ASP.NET Core Tag Helpers over raw HTML links or old HTML helpers:
   - Good: `<a asp-controller="Vote" asp-action="Index">Vote Now</a>`
   - Good: `<input asp-for="CandidateName" class="form-control" />`
