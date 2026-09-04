@@ -6,16 +6,27 @@ namespace VotingSystem.Controllers
 {
     public class HomeController : Controller
     {
+        [Route("")]
+        [Route("index")]
+        [Route("home")]
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        [Route("about")]
+        public IActionResult About()
         {
             return View();
         }
 
+        [Route("contact")]
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        [Route("error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
