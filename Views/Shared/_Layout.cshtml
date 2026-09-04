@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/VotingSystem.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
-    <partial name="LayoutPartials/_Navbar" />
+    <partial name="_Navbar" />
 
     <div class="container">
         <main role="main" class="pb-3">
@@ -17,7 +18,7 @@
         </main>
     </div>
 
-    <partial name="LayoutPartials/_Footer" />
+    <partial name="_Footer" />
 
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

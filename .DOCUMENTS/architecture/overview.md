@@ -50,13 +50,22 @@ VotingSystem/
 ├── Views/               # Razor templates (.cshtml)
 │   ├── Home/            # Views specific to HomeController
 │   │   ├── Index.cshtml # Main page (Orchestrator view)
+│   │   ├── About.cshtml
+│   │   ├── Contact.cshtml
 │   │   └── IndexPartials/ # Feature-scoped partial views
 │   │       ├── _Hero.cshtml
 │   │       ├── _Features.cshtml
 │   │       └── _CTA.cshtml
-│   └── Shared/          # Shared views (_Layout.cshtml, _ValidationScriptsPartial.cshtml)
+│   └── Shared/          # Shared views (_Layout.cshtml, _Navbar.cshtml, _Footer.cshtml, _ValidationScriptsPartial.cshtml)
+│       ├── _Layout.cshtml
+│       ├── _Navbar.cshtml
+│       └── _Footer.cshtml
 ├── wwwroot/             # Static web assets
-│   ├── css/             # Custom stylesheets (site.css)
+│   ├── css/             # Modular stylesheets (Option 1 architecture)
+│   │   ├── base/        # Design tokens & resets (variables.css, reset.css)
+│   │   ├── components/  # Reusable UI components (navbar.css, footer.css)
+│   │   ├── pages/       # Page-specific stylesheets (home.css)
+│   │   └── site.css     # Central entry point importing base and components
 │   ├── js/              # Custom scripts (site.js)
 │   └── lib/             # Third-party dependencies (Bootstrap, jQuery)
 ├── Program.cs           # Web application bootstrap, DI (MongoDB registration), & middleware

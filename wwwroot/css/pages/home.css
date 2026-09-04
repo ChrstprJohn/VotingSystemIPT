@@ -1,0 +1,35 @@
+/* ==========================================================================
+   Page: Home (Index, Hero, Features, CTA)
+   ========================================================================== */
+.home-hero {
+  padding: 4rem 1rem 3rem;
+  text-align: center;
+}
+
+.home-hero h1 {
+  font-size: 2.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--color-text-main);
+  margin-bottom: 1rem;
+}
+
+.home-hero p {
+  font-size: 1.25rem;
+  color: var(--color-text-muted);
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.home-features {
+  padding: 3rem 0;
+}
+
+.home-cta {
+  padding: 3rem 1.5rem;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: #ffffff;
+  text-align: center;
+  margin: 2rem 0;
+}
