@@ -17,6 +17,17 @@ The application uses ASP.NET Core configuration providers:
 - **`appsettings.json`**: Base configuration (Logging, connection strings, feature flags).
 - **`appsettings.Development.json`**: Overrides specific to local development (e.g., debug logging levels).
 
+### MongoDB Configuration Keys:
+```json
+{
+  "MongoDbSettings": {
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "VotingSystemDb"
+  }
+}
+```
+*Note: For production or sensitive credentials, use `dotnet user-secrets` in development or environment variables in production.*
+
 ---
 
 ## 3. Local Execution Commands
