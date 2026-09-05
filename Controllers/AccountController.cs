@@ -1,13 +1,14 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
-using VotingSystem.Models;
-
 namespace VotingSystem.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly AccountService _accountService;
+
+        public AccountController(AccountService accountService)
+        {
+            _accountService = accountService;
+        }
+
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
@@ -26,34 +27,16 @@ namespace VotingSystem.Controllers
                 return View(model);
             }
 
-            // TODO: Replace this demo credential check with a real user store / database lookup.
-            if (model.Username != "admin" || model.Password != "admin123")
+            var result = await _accountService.LoginUserAsync(model);
+
+            if (!result.Succeeded)
             {
-                ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                ModelState.AddModelError(string.Empty, result.ErrorMessage!);
                 return View(model);
             }
 
-            var claims = new List<Claim>
-            {
-                new(ClaimTypes.Name, model.Username),
-                new(ClaimTypes.Role, "Administrator")
-            };
-
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = model.RememberMe
-            };
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity),
-                authProperties);
-
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)) return Redirect(returnUrl);
+            
 
             return RedirectToAction("Index", "Home");
         }
