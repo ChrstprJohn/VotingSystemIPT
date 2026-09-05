@@ -513,6 +513,102 @@
   background-color: #f8fafc;
 }
 
+/* Action Dropdown Menu & Button */
+.btn-action-more {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn-action-more:hover,
+.btn-action-more:focus,
+.btn-action-more[aria-expanded="true"] {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #0f172a;
+}
+
+.dropdown-menu-actions {
+  min-width: 205px;
+  padding: 0.35rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  background: #ffffff;
+  z-index: 1060;
+}
+
+.dropdown-menu-actions .dropdown-header {
+  padding: 0.35rem 0.65rem 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+
+.dropdown-menu-actions .dropdown-item {
+  font-size: 0.835rem;
+  font-weight: 500;
+  padding: 0.45rem 0.65rem;
+  border-radius: 5px;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+}
+
+.dropdown-menu-actions .dropdown-item svg {
+  color: #64748b;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.dropdown-menu-actions .dropdown-item:hover,
+.dropdown-menu-actions .dropdown-item:focus {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.dropdown-menu-actions .dropdown-item:hover svg,
+.dropdown-menu-actions .dropdown-item:focus svg {
+  color: #0f172a;
+}
+
+.dropdown-menu-actions .dropdown-item.text-danger {
+  color: #dc2626 !important;
+}
+
+.dropdown-menu-actions .dropdown-item.text-danger svg {
+  color: #dc2626 !important;
+}
+
+.dropdown-menu-actions .dropdown-item.text-danger:hover,
+.dropdown-menu-actions .dropdown-item.text-danger:focus {
+  background-color: #fef2f2 !important;
+  color: #b91c1c !important;
+}
+
+.dropdown-menu-actions .dropdown-divider {
+  margin: 0.25rem 0;
+  border-color: #f1f5f9;
+}
+
 /* Badge Status Styles */
 .badge-status {
   display: inline-flex;

@@ -3,11 +3,11 @@
     <table class="admin-table" id="electionsTable">
         <thead>
             <tr>
-                <th style="min-width: 250px;">Election Title & Scope</th>
-                <th style="min-width: 200px;">Schedule (Start & End)</th>
+                <th style="min-width: 250px;">Election Title &amp; Scope</th>
+                <th style="min-width: 200px;">Schedule (Start &amp; End)</th>
                 <th style="width: 140px;">Status</th>
-                <th style="width: 150px;">Ballot Setup</th>
-                <th style="width: 130px; text-align: right;">Action</th>
+                <th style="width: 120px;">Positions</th>
+                <th style="width: 80px; text-align: right;">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -15,7 +15,6 @@
             <tr>
                 <td>
                     <div class="d-flex align-items-center gap-2">
-                        <span class="status-indicator-pulse live"></span>
                         <div>
                             <span class="voter-name-main text-dark">Supreme Student Council General Elections</span>
                             <span class="voter-email-sub">A.Y. 2026–2027 &bull; University-Wide Campus</span>
@@ -43,18 +42,72 @@
                     </span>
                 </td>
                 <td>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-light text-dark border small fw-normal">10 Positions</span>
-                        <span class="badge bg-light text-muted border small fw-normal">24 Candidates</span>
-                    </div>
+                    <span class="badge bg-light text-dark border small fw-normal">10 Positions</span>
                 </td>
                 <td style="text-align: right;">
-                    <button type="button" class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1 px-2.5 py-1" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal">
-                        <span>Manage</span>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </button>
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn-action-more" data-bs-toggle="dropdown" data-bs-boundary="viewport" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" title="Actions" aria-label="Election actions">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="1.5"></circle>
+                                <circle cx="19" cy="12" r="1.5"></circle>
+                                <circle cx="5" cy="12" r="1.5"></circle>
+                            </svg>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-actions shadow-sm">
+                            <li><h6 class="dropdown-header">Manage</h6></li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="overviewTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="7" height="7"></rect>
+                                        <rect x="14" y="3" width="7" height="7"></rect>
+                                        <rect x="14" y="14" width="7" height="7"></rect>
+                                        <rect x="3" y="14" width="7" height="7"></rect>
+                                    </svg>
+                                    <span>Overview &amp; Stats</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="positionsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="8.5" cy="7" r="4"></circle>
+                                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                                    </svg>
+                                    <span>Positions &amp; Quotas</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="partylistsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                    <span>Partylists</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="candidatesTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                    <span>Candidates</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="settingsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                    </svg>
+                                    <span>Settings</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </td>
             </tr>
 
@@ -62,7 +115,6 @@
             <tr>
                 <td>
                     <div class="d-flex align-items-center gap-2">
-                        <span class="status-indicator-pulse prep"></span>
                         <div>
                             <span class="voter-name-main text-dark">College of Computing Studies (CCS) Council</span>
                             <span class="voter-email-sub">1st Semester 2026–2027 &bull; Local College Election</span>
@@ -90,18 +142,72 @@
                     </span>
                 </td>
                 <td>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-light text-dark border small fw-normal">6 Positions</span>
-                        <span class="badge bg-light text-muted border small fw-normal">14 Candidates</span>
-                    </div>
+                    <span class="badge bg-light text-dark border small fw-normal">6 Positions</span>
                 </td>
                 <td style="text-align: right;">
-                    <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 px-2.5 py-1" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal">
-                        <span>Manage</span>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </button>
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn-action-more" data-bs-toggle="dropdown" data-bs-boundary="viewport" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" title="Actions" aria-label="Election actions">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="1.5"></circle>
+                                <circle cx="19" cy="12" r="1.5"></circle>
+                                <circle cx="5" cy="12" r="1.5"></circle>
+                            </svg>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-actions shadow-sm">
+                            <li><h6 class="dropdown-header">Manage</h6></li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="overviewTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="7" height="7"></rect>
+                                        <rect x="14" y="3" width="7" height="7"></rect>
+                                        <rect x="14" y="14" width="7" height="7"></rect>
+                                        <rect x="3" y="14" width="7" height="7"></rect>
+                                    </svg>
+                                    <span>Overview &amp; Stats</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="positionsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="8.5" cy="7" r="4"></circle>
+                                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                                    </svg>
+                                    <span>Positions &amp; Quotas</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="partylistsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                    <span>Partylists</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="candidatesTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                    <span>Candidates</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="settingsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                    </svg>
+                                    <span>Settings</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </td>
             </tr>
 
@@ -109,7 +215,6 @@
             <tr>
                 <td>
                     <div class="d-flex align-items-center gap-2">
-                        <span class="status-indicator-pulse upcoming"></span>
                         <div>
                             <span class="voter-name-main text-dark">Engineering Student Council Special Election</span>
                             <span class="voter-email-sub">College of Engineering &bull; Term 2026</span>
@@ -137,18 +242,72 @@
                     </span>
                 </td>
                 <td>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-light text-dark border small fw-normal">8 Positions</span>
-                        <span class="badge bg-light text-muted border small fw-normal">0 Candidates</span>
-                    </div>
+                    <span class="badge bg-light text-dark border small fw-normal">8 Positions</span>
                 </td>
                 <td style="text-align: right;">
-                    <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 px-2.5 py-1" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal">
-                        <span>Manage</span>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </button>
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn-action-more" data-bs-toggle="dropdown" data-bs-boundary="viewport" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" title="Actions" aria-label="Election actions">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="1.5"></circle>
+                                <circle cx="19" cy="12" r="1.5"></circle>
+                                <circle cx="5" cy="12" r="1.5"></circle>
+                            </svg>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-actions shadow-sm">
+                            <li><h6 class="dropdown-header">Manage</h6></li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="overviewTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="7" height="7"></rect>
+                                        <rect x="14" y="3" width="7" height="7"></rect>
+                                        <rect x="14" y="14" width="7" height="7"></rect>
+                                        <rect x="3" y="14" width="7" height="7"></rect>
+                                    </svg>
+                                    <span>Overview &amp; Stats</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="positionsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="8.5" cy="7" r="4"></circle>
+                                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                                    </svg>
+                                    <span>Positions &amp; Quotas</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="partylistsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                    <span>Partylists</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="candidatesTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                    <span>Candidates</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="settingsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                    </svg>
+                                    <span>Settings</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </td>
             </tr>
 
@@ -156,7 +315,6 @@
             <tr>
                 <td>
                     <div class="d-flex align-items-center gap-2">
-                        <span class="status-indicator-pulse completed"></span>
                         <div>
                             <span class="voter-name-main text-dark">SSC Midterm Representative Plebiscite</span>
                             <span class="voter-email-sub">A.Y. 2025–2026 &bull; Special Vote</span>
@@ -184,18 +342,72 @@
                     </span>
                 </td>
                 <td>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-light text-muted border small fw-normal">4 Positions</span>
-                        <span class="badge bg-light text-muted border small fw-normal">Final Tally</span>
-                    </div>
+                    <span class="badge bg-light text-muted border small fw-normal">4 Positions</span>
                 </td>
                 <td style="text-align: right;">
-                    <button type="button" class="btn btn-sm btn-light border d-inline-flex align-items-center gap-1 px-2.5 py-1 text-muted" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal">
-                        <span>View</span>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </button>
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn-action-more" data-bs-toggle="dropdown" data-bs-boundary="viewport" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" title="Actions" aria-label="Election actions">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="1.5"></circle>
+                                <circle cx="19" cy="12" r="1.5"></circle>
+                                <circle cx="5" cy="12" r="1.5"></circle>
+                            </svg>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-actions shadow-sm">
+                            <li><h6 class="dropdown-header">Manage</h6></li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="overviewTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="7" height="7"></rect>
+                                        <rect x="14" y="3" width="7" height="7"></rect>
+                                        <rect x="14" y="14" width="7" height="7"></rect>
+                                        <rect x="3" y="14" width="7" height="7"></rect>
+                                    </svg>
+                                    <span>Overview &amp; Stats</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="positionsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="8.5" cy="7" r="4"></circle>
+                                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                                    </svg>
+                                    <span>Positions &amp; Quotas</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="partylistsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                    <span>Partylists</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="candidatesTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                    <span>Candidates</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="settingsTabPane">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                    </svg>
+                                    <span>Settings</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </td>
             </tr>
         </tbody>
