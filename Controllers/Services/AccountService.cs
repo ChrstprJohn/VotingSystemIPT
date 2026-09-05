@@ -1,6 +1,6 @@
-using VotingSystem.Controllers.Services;
-
-public sealed class AccountService
+namespace VotingSystem.Controllers.Services
+{
+    public sealed class AccountService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -56,4 +56,5 @@ public sealed class AccountService
 
         return LoginResult.Success(role);
     }
+}
 }
