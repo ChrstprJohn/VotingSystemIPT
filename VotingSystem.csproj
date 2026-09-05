@@ -10,4 +10,8 @@
     <PackageReference Include="MongoDB.Driver" Version="3.11.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\image-logo\" />
+  </ItemGroup>
+
 </Project>

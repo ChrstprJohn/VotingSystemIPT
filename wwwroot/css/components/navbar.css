@@ -36,7 +36,19 @@
     transition: 0.2s;
 }
 
-    .login-btn:hover {
+.login-btn:hover {
         background-color: #1d4ed8;
         color: white;
-    }
+}
+
+.navbar-logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover .navbar-logo {
+    transform: scale(1.1) rotate(3deg);
+}
