@@ -138,6 +138,20 @@
                     electionTitleInput.classList.remove('is-invalid');
 
                     // Check date/time
+                    if (startDateInput && !startDateInput.value) {
+                        startDateInput.classList.add('is-invalid');
+                        startDateInput.focus();
+                        return false;
+                    }
+                    if (startDateInput) startDateInput.classList.remove('is-invalid');
+
+                    if (endDateInput && !endDateInput.value) {
+                        endDateInput.classList.add('is-invalid');
+                        endDateInput.focus();
+                        return false;
+                    }
+                    if (endDateInput) endDateInput.classList.remove('is-invalid');
+
                     if (startDateInput && endDateInput && startDateInput.value && endDateInput.value) {
                         const start = new Date(`${startDateInput.value}T${startTimeInput?.value || '00:00'}`);
                         const end = new Date(`${endDateInput.value}T${endTimeInput?.value || '23:59'}`);
@@ -187,6 +201,8 @@
                     if (electionTitleInput) {
                         electionTitleInput.classList.remove('is-invalid');
                     }
+                    if (startDateInput) startDateInput.classList.remove('is-invalid');
+                    if (endDateInput) endDateInput.classList.remove('is-invalid');
                 });
             }
 
@@ -197,6 +213,16 @@
                     }
                 });
             }
+
+            [startDateInput, endDateInput].forEach(inp => {
+                if (inp) {
+                    inp.addEventListener('input', function () {
+                        if (this.value) {
+                            this.classList.remove('is-invalid');
+                        }
+                    });
+                }
+            });
 
             // Position Add & Remove Events
             if (btnAddCard && cardsContainer) {
@@ -255,13 +281,19 @@
                     const sy = electionSchoolYearInput?.value || '2026-2027';
                     const scope = (electionScopeInput?.value || 'University-Wide Campus').trim();
                     const scopeSubtitle = `A.Y. ${sy} &bull; ${escapeHtml(scope)}`;
-                    const sDate = startDateInput?.value || '2026-10-15';
-                    const sTime = startTimeInput?.value || '08:00';
-                    const eDate = endDateInput?.value || '2026-10-16';
-                    const eTime = endTimeInput?.value || '17:00';
+                    const sDate = startDateInput?.value;
+                    const sTime = startTimeInput?.value;
+                    const eDate = endDateInput?.value;
+                    const eTime = endTimeInput?.value;
 
-                    const sFormatted = new Date(`${sDate}T${sTime}`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                    const eFormatted = new Date(`${eDate}T${eTime}`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    const sFormatted = sDate
+                        ? new Date(`${sDate}T${sTime || '00:00'}`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                        : 'TBD';
+                    const eFormatted = eDate
+                        ? new Date(`${eDate}T${eTime || '23:59'}`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                        : 'TBD';
+                    const sTimeDisplay = sTime ? ` &bull; ${sTime}` : '';
+                    const eTimeDisplay = eTime ? ` &bull; ${eTime}` : '';
                     const posCount = titleInputs.length;
 
                     // Dynamically prepend new row to Elections Table
@@ -286,10 +318,10 @@
                                             <circle cx="12" cy="12" r="10"></circle>
                                             <polyline points="12 6 12 12 16 14"></polyline>
                                         </svg>
-                                        ${sFormatted} &bull; ${sTime}
+                                        ${sFormatted}${sTimeDisplay}
                                     </span>
                                     <span class="text-muted small">
-                                        to ${eFormatted} &bull; ${eTime}
+                                        to ${eFormatted}${eTimeDisplay}
                                     </span>
                                 </div>
                             </td>
@@ -329,6 +361,10 @@
                     if (electionTitleInput) electionTitleInput.value = '';
                     if (electionScopeInput) electionScopeInput.value = '';
                     if (electionDescInput) electionDescInput.value = '';
+                    if (startDateInput) { startDateInput.value = ''; startDateInput.classList.remove('is-invalid'); }
+                    if (startTimeInput) startTimeInput.value = '';
+                    if (endDateInput) { endDateInput.value = ''; endDateInput.classList.remove('is-invalid'); }
+                    if (endTimeInput) endTimeInput.value = '';
                     renderInitialPositions();
                 });
             }
