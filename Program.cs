@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using VotingSystem.Configuration;
+using VotingSystem.Controllers.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +14,17 @@ builder.Services.AddScoped<AccountService>();
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
 
+builder.Services.AddSingleton<MongoConnectionNotifier>();
+
 builder.Services.AddSingleton<IMongoClient>(sp =>
 {
     var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
-    return new MongoClient(settings.ConnectionString);
+    var notifier = sp.GetRequiredService<MongoConnectionNotifier>();
+
+    var clientSettings = MongoClientSettings.FromConnectionString(settings.ConnectionString);
+    clientSettings.ClusterConfigurator = notifier.Configure;
+
+    return new MongoClient(clientSettings);
 });
 
 builder.Services.AddSingleton(sp =>
