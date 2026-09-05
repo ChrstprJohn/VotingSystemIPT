@@ -2,6 +2,9 @@
    Master Stylesheet (Entry Point)
    ========================================================================== */
 
+/* 0. Geist Font Family */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap");
+
 /* 1. Base Layer (Design tokens & resets) */
 @import url("base/variables.css");
 @import url("base/reset.css");
@@ -9,6 +12,7 @@
 /* 2. Components Layer (Reusable components across all pages) */
 @import url("components/navbar.css");
 @import url("components/footer.css");
+@import url("pages/admin.css");
 
 /* 3. Global Form & Button Utilities */
 .btn-primary {

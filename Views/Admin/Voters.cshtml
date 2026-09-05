@@ -1,0 +1,356 @@
+@{
+    ViewData["Title"] = "Voters Directory";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin.css" asp-append-version="true" />
+}
+
+@section TopbarActions {
+    <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 px-2 py-1" id="btnExportVoters">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Export</span>
+    </button>
+    <button type="button" class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1 px-2.5 py-1" data-bs-toggle="modal" data-bs-target="#importRegistrarModal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <span>Import Registrar File</span>
+    </button>
+}
+
+<div class="container-fluid px-0">
+    <!-- Summary Metrics Row -->
+    <div class="voters-metrics-row">
+        <div class="metric-mini-card">
+            <div>
+                <div class="metric-mini-label">Total Registered</div>
+                <div class="metric-mini-val">4,820</div>
+            </div>
+            <svg class="metric-mini-icon-right" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+        </div>
+        <div class="metric-mini-card">
+            <div>
+                <div class="metric-mini-label">Eligible Voters</div>
+                <div class="metric-mini-val text-success">4,690</div>
+            </div>
+            <svg class="metric-mini-icon-right" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+        </div>
+        <div class="metric-mini-card">
+            <div>
+                <div class="metric-mini-label">Inactive / Ineligible</div>
+                <div class="metric-mini-val text-muted">130</div>
+            </div>
+            <svg class="metric-mini-icon-right" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Main Table Card -->
+    <div class="admin-card">
+        <!-- Toolbar: Search & Filters -->
+        <div class="voters-toolbar">
+            <div class="voters-search-box">
+                <svg class="voters-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" class="voters-search-input" id="votersSearchInput" placeholder="Search by Student ID, name, or email..." />
+            </div>
+
+            <div class="voters-filter-group">
+                <select class="form-select form-select-sm voters-filter-select" id="statusFilter">
+                    <option value="all">All Status</option>
+                    <option value="active">Active (Enrolled)</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+
+                <select class="form-select form-select-sm voters-filter-select" id="departmentFilter">
+                    <option value="all">All Departments</option>
+                    <option value="it">IT</option>
+                    <option value="engineering">Engineering</option>
+                    <option value="education">Education</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Directory Table -->
+        <div class="admin-table-container">
+            <table class="admin-table" id="votersTable">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Student ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Middle Name</th>
+                        <th style="width: 80px;">Suffix</th>
+                        <th>Email Address</th>
+                        <th style="width: 130px;">Department</th>
+                        <th style="width: 120px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>24-1635</td>
+                        <td><span class="voter-name-main">Juan</span></td>
+                        <td><span class="voter-name-main">Dela Cruz</span></td>
+                        <td><span class="text-muted">Santos</span></td>
+                        <td><span class="text-muted">Jr.</span></td>
+                        <td>
+                            <span class="text-dark">juan.delacruz@qcu.edu.ph</span>
+                        </td>
+                        <td><span class="text-muted">IT</span></td>
+                        <td>
+                            <span class="status-badge-dot active">
+                                <span class="dot-indicator active"></span>
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>24-1636</td>
+                        <td><span class="voter-name-main">Maria Clara</span></td>
+                        <td><span class="voter-name-main">Gomez</span></td>
+                        <td><span class="text-muted">Lopez</span></td>
+                        <td><span class="text-muted">&mdash;</span></td>
+                        <td>
+                            <span class="text-dark">maria.gomez@qcu.edu.ph</span>
+                        </td>
+                        <td><span class="text-muted">Education</span></td>
+                        <td>
+                            <span class="status-badge-dot active">
+                                <span class="dot-indicator active"></span>
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>24-1637</td>
+                        <td><span class="voter-name-main">Carlos</span></td>
+                        <td><span class="voter-name-main">Alvarez</span></td>
+                        <td><span class="text-muted">Miguel</span></td>
+                        <td><span class="text-muted">III</span></td>
+                        <td>
+                            <span class="text-dark">carlos.alvarez@qcu.edu.ph</span>
+                        </td>
+                        <td><span class="text-muted">Engineering</span></td>
+                        <td>
+                            <span class="status-badge-dot active">
+                                <span class="dot-indicator active"></span>
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>24-1638</td>
+                        <td><span class="voter-name-main">Patricia Joy</span></td>
+                        <td><span class="voter-name-main">Reyes</span></td>
+                        <td><span class="text-muted">Bautista</span></td>
+                        <td><span class="text-muted">&mdash;</span></td>
+                        <td>
+                            <span class="text-dark">patricia.reyes@qcu.edu.ph</span>
+                        </td>
+                        <td><span class="text-muted">IT</span></td>
+                        <td>
+                            <span class="status-badge-dot inactive">
+                                <span class="dot-indicator inactive"></span>
+                                Inactive
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>24-1639</td>
+                        <td><span class="voter-name-main">Andrea Nicole</span></td>
+                        <td><span class="voter-name-main">Mendoza</span></td>
+                        <td><span class="text-muted">Nicole</span></td>
+                        <td><span class="text-muted">&mdash;</span></td>
+                        <td>
+                            <span class="text-dark">andrea.mendoza@qcu.edu.ph</span>
+                        </td>
+                        <td><span class="text-muted">Education</span></td>
+                        <td>
+                            <span class="status-badge-dot active">
+                                <span class="dot-indicator active"></span>
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>24-1640</td>
+                        <td><span class="voter-name-main">Rafael</span></td>
+                        <td><span class="voter-name-main">Santos</span></td>
+                        <td><span class="text-muted">Cruz</span></td>
+                        <td><span class="text-muted">&mdash;</span></td>
+                        <td><span class="text-dark">rafael.santos@qcu.edu.ph</span></td>
+                        <td><span class="text-muted">Engineering</span></td>
+                        <td>
+                            <span class="status-badge-dot active">
+                                <span class="dot-indicator active"></span>
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>24-1641</td>
+                        <td><span class="voter-name-main">Liza</span></td>
+                        <td><span class="voter-name-main">Villanueva</span></td>
+                        <td><span class="text-muted">Mae</span></td>
+                        <td><span class="text-muted">&mdash;</span></td>
+                        <td><span class="text-dark">liza.villanueva@qcu.edu.ph</span></td>
+                        <td><span class="text-muted">IT</span></td>
+                        <td>
+                            <span class="status-badge-dot inactive">
+                                <span class="dot-indicator inactive"></span>
+                                Inactive
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>24-1642</td>
+                        <td><span class="voter-name-main">Marco</span></td>
+                        <td><span class="voter-name-main">Aquino</span></td>
+                        <td><span class="text-muted">Jose</span></td>
+                        <td><span class="text-muted">Sr.</span></td>
+                        <td><span class="text-dark">marco.aquino@qcu.edu.ph</span></td>
+                        <td><span class="text-muted">Engineering</span></td>
+                        <td>
+                            <span class="status-badge-dot active">
+                                <span class="dot-indicator active"></span>
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>24-1643</td>
+                        <td><span class="voter-name-main">Sophia</span></td>
+                        <td><span class="voter-name-main">Dela Vega</span></td>
+                        <td><span class="text-muted">Anne</span></td>
+                        <td><span class="text-muted">&mdash;</span></td>
+                        <td><span class="text-dark">sophia.delavega@qcu.edu.ph</span></td>
+                        <td><span class="text-muted">Education</span></td>
+                        <td>
+                            <span class="status-badge-dot active">
+                                <span class="dot-indicator active"></span>
+                                Active
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>24-1644</td>
+                        <td><span class="voter-name-main">Jerome</span></td>
+                        <td><span class="voter-name-main">Pascual</span></td>
+                        <td><span class="text-muted">Luis</span></td>
+                        <td><span class="text-muted">II</span></td>
+                        <td><span class="text-dark">jerome.pascual@qcu.edu.ph</span></td>
+                        <td><span class="text-muted">IT</span></td>
+                        <td>
+                            <span class="status-badge-dot inactive">
+                                <span class="dot-indicator inactive"></span>
+                                Inactive
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Footer -->
+        <div class="voters-pagination-container">
+            <span>Showing 1 to 10 of 4,820 student voters</span>
+            <nav aria-label="Table pagination">
+                <ul class="pagination pagination-sm m-0 gap-1">
+                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Import from Registrar File -->
+<div class="modal fade import-modal" id="importRegistrarModal" tabindex="-1" aria-labelledby="importRegistrarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark" id="importRegistrarModalLabel">Import Registrar Masterlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <p class="text-muted small mb-3">
+                    Upload the official masterlist exported from the Registrar Office. The system will automatically map the students and set their voting eligibility based on their enrollment status.
+                </p>
+
+                <!-- Drag and drop zone -->
+                <div class="import-dropzone" onclick="document.getElementById('registrarFileInput').click()">
+                    <input type="file" id="registrarFileInput" accept=".csv, .xlsx, .xls" style="display: none;" />
+                    <div class="import-dropzone-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <div class="fw-semibold text-dark">Click to browse or drop registrar file here</div>
+                    <div class="text-muted small mt-1">Supports CSV or Excel (.xlsx, .xls)</div>
+                </div>
+
+                <!-- Expected file format guidance -->
+                <div class="mt-3 p-2 bg-light rounded border">
+                    <div class="text-muted small fw-semibold mb-1">Required File Columns:</div>
+                    <div>
+                        <span class="import-field-tag">student_id</span>
+                        <span class="import-field-tag">fname</span>
+                        <span class="import-field-tag">lname</span>
+                        <span class="import-field-tag">middle</span>
+                        <span class="import-field-tag">suffix</span>
+                        <span class="import-field-tag">status</span>
+                        <span class="import-field-tag">email</span>
+                    </div>
+                </div>
+
+                <div class="alert alert-light border small text-muted mt-3 mb-0">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1 text-primary">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <strong>Automatic Eligibility:</strong> Rows with status <code>Active</code> are automatically marked <strong>Eligible</strong> to vote. <code>Inactive</code> rows are marked <strong>Ineligible</strong>.
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+                <button type="button" class="btn btn-sm btn-light border" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-sm btn-dark px-3" id="btnConfirmImport" data-bs-dismiss="modal">
+                    Upload & Sync Voters
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

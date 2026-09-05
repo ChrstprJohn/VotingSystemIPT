@@ -11,18 +11,25 @@ public sealed class AccountService
 
     public async Task<LoginResult> LoginUserAsync(LoginViewModel model)
     {
-        // // TODO: Replace this demo check with MongoDB lookup.
-        // if (model.Username != "admin" ||
-        //     model.Password != "admin123")
-        // {
-        //     return LoginResult.Failed(
-        //         "Invalid username or password.");
-        // }
+        // Mock credential check
+        string role;
+        if (model.Username == "admin" && model.Password == "admin123")
+        {
+            role = "Administrator";
+        }
+        else if (model.Username == "partylistleader" && model.Password == "partylistleader123")
+        {
+            role = "PartylistLeader";
+        }
+        else
+        {
+            return LoginResult.Failed("Invalid username or password.");
+        }
 
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, model.Username),
-            new(ClaimTypes.Role, "Administrator")
+            new(ClaimTypes.Role, role)
         };
 
         var identity = new ClaimsIdentity(
@@ -47,6 +54,6 @@ public sealed class AccountService
                 IsPersistent = model.RememberMe
             });
 
-        return LoginResult.Success();
+        return LoginResult.Success(role);
     }
 }
