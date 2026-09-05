@@ -164,6 +164,17 @@
                             </li>
                             @if (activePage != "Dashboard")
                             {
+                                @if (ViewData["BreadcrumbParent"] != null)
+                                {
+                                    <li class="admin-breadcrumb-separator" aria-hidden="true">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </li>
+                                    <li class="admin-breadcrumb-item">
+                                        <a href="@(ViewData["BreadcrumbParentUrl"] ?? "/Admin/Elections")" class="admin-breadcrumb-link">@ViewData["BreadcrumbParent"]</a>
+                                    </li>
+                                }
                                 <li class="admin-breadcrumb-separator" aria-hidden="true">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="9 18 15 12 9 6"></polyline>
@@ -183,7 +194,7 @@
             </header>
 
             <!-- Main Page Content -->
-            <main role="main" class="admin-content">
+            <main role="main" class="admin-content @(ViewData["IsFullWidth"] as bool? == true ? "p-0" : "")">
                 @RenderBody()
             </main>
         </div>

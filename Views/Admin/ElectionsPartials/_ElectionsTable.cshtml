@@ -16,7 +16,7 @@
                 <td>
                     <div class="d-flex align-items-center gap-2">
                         <div>
-                            <span class="voter-name-main text-dark">Supreme Student Council General Elections</span>
+                            <a asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="1" asp-route-tab="overview" class="voter-name-main text-dark text-decoration-none hover-underline">Supreme Student Council General Elections</a>
                             <span class="voter-email-sub">A.Y. 2026–2027 &bull; University-Wide Campus</span>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-actions shadow-sm">
                             <li><h6 class="dropdown-header">Manage</h6></li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="overviewTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="1" asp-route-tab="overview">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="3" y="3" width="7" height="7"></rect>
                                         <rect x="14" y="3" width="7" height="7"></rect>
@@ -64,10 +64,10 @@
                                         <rect x="3" y="14" width="7" height="7"></rect>
                                     </svg>
                                     <span>Overview &amp; Stats</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="positionsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="1" asp-route-tab="positions">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="8.5" cy="7" r="4"></circle>
@@ -75,10 +75,10 @@
                                         <line x1="23" y1="11" x2="17" y2="11"></line>
                                     </svg>
                                     <span>Positions &amp; Quotas</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="partylistsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="1" asp-route-tab="partylists">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="9" cy="7" r="4"></circle>
@@ -86,37 +86,35 @@
                                         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                     </svg>
                                     <span>Partylists</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="candidatesTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="1" asp-route-tab="candidates">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="12" cy="7" r="4"></circle>
                                     </svg>
                                     <span>Candidates</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="settingsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="1" asp-route-tab="settings">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="3"></circle>
                                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                                     </svg>
                                     <span>Settings</span>
-                                </button>
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </td>
-            </tr>
-
-            <!-- Row 2: Preparation -->
+            </tr>            <!-- Row 2: Preparation -->
             <tr>
                 <td>
                     <div class="d-flex align-items-center gap-2">
                         <div>
-                            <span class="voter-name-main text-dark">College of Computing Studies (CCS) Council</span>
+                            <a asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="2" asp-route-tab="overview" class="voter-name-main text-dark text-decoration-none hover-underline">College of Computing Studies (CCS) Council</a>
                             <span class="voter-email-sub">1st Semester 2026–2027 &bull; Local College Election</span>
                         </div>
                     </div>
@@ -156,7 +154,7 @@
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-actions shadow-sm">
                             <li><h6 class="dropdown-header">Manage</h6></li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="overviewTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="2" asp-route-tab="overview">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="3" y="3" width="7" height="7"></rect>
                                         <rect x="14" y="3" width="7" height="7"></rect>
@@ -164,10 +162,10 @@
                                         <rect x="3" y="14" width="7" height="7"></rect>
                                     </svg>
                                     <span>Overview &amp; Stats</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="positionsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="2" asp-route-tab="positions">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="8.5" cy="7" r="4"></circle>
@@ -175,10 +173,10 @@
                                         <line x1="23" y1="11" x2="17" y2="11"></line>
                                     </svg>
                                     <span>Positions &amp; Quotas</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="partylistsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="2" asp-route-tab="partylists">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="9" cy="7" r="4"></circle>
@@ -186,25 +184,25 @@
                                         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                     </svg>
                                     <span>Partylists</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="candidatesTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="2" asp-route-tab="candidates">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="12" cy="7" r="4"></circle>
                                     </svg>
                                     <span>Candidates</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="settingsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="2" asp-route-tab="settings">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="3"></circle>
                                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                                     </svg>
                                     <span>Settings</span>
-                                </button>
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -216,7 +214,7 @@
                 <td>
                     <div class="d-flex align-items-center gap-2">
                         <div>
-                            <span class="voter-name-main text-dark">Engineering Student Council Special Election</span>
+                            <a asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="3" asp-route-tab="overview" class="voter-name-main text-dark text-decoration-none hover-underline">Engineering Student Council Special Election</a>
                             <span class="voter-email-sub">College of Engineering &bull; Term 2026</span>
                         </div>
                     </div>
@@ -256,7 +254,7 @@
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-actions shadow-sm">
                             <li><h6 class="dropdown-header">Manage</h6></li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="overviewTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="3" asp-route-tab="overview">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="3" y="3" width="7" height="7"></rect>
                                         <rect x="14" y="3" width="7" height="7"></rect>
@@ -264,10 +262,10 @@
                                         <rect x="3" y="14" width="7" height="7"></rect>
                                     </svg>
                                     <span>Overview &amp; Stats</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="positionsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="3" asp-route-tab="positions">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="8.5" cy="7" r="4"></circle>
@@ -275,10 +273,10 @@
                                         <line x1="23" y1="11" x2="17" y2="11"></line>
                                     </svg>
                                     <span>Positions &amp; Quotas</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="partylistsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="3" asp-route-tab="partylists">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="9" cy="7" r="4"></circle>
@@ -286,25 +284,25 @@
                                         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                     </svg>
                                     <span>Partylists</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="candidatesTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="3" asp-route-tab="candidates">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="12" cy="7" r="4"></circle>
                                     </svg>
                                     <span>Candidates</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="settingsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="3" asp-route-tab="settings">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="3"></circle>
                                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                                     </svg>
                                     <span>Settings</span>
-                                </button>
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -316,7 +314,7 @@
                 <td>
                     <div class="d-flex align-items-center gap-2">
                         <div>
-                            <span class="voter-name-main text-dark">SSC Midterm Representative Plebiscite</span>
+                            <a asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="4" asp-route-tab="overview" class="voter-name-main text-dark text-decoration-none hover-underline">SSC Midterm Representative Plebiscite</a>
                             <span class="voter-email-sub">A.Y. 2025–2026 &bull; Special Vote</span>
                         </div>
                     </div>
@@ -356,7 +354,7 @@
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-actions shadow-sm">
                             <li><h6 class="dropdown-header">Manage</h6></li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="overviewTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="4" asp-route-tab="overview">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="3" y="3" width="7" height="7"></rect>
                                         <rect x="14" y="3" width="7" height="7"></rect>
@@ -364,10 +362,10 @@
                                         <rect x="3" y="14" width="7" height="7"></rect>
                                     </svg>
                                     <span>Overview &amp; Stats</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="positionsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="4" asp-route-tab="positions">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="8.5" cy="7" r="4"></circle>
@@ -375,10 +373,10 @@
                                         <line x1="23" y1="11" x2="17" y2="11"></line>
                                     </svg>
                                     <span>Positions &amp; Quotas</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="partylistsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="4" asp-route-tab="partylists">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="9" cy="7" r="4"></circle>
@@ -386,25 +384,25 @@
                                         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                     </svg>
                                     <span>Partylists</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="candidatesTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="4" asp-route-tab="candidates">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                         <circle cx="12" cy="7" r="4"></circle>
                                     </svg>
                                     <span>Candidates</span>
-                                </button>
+                                </a>
                             </li>
                             <li>
-                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal" data-election-tab="settingsTabPane">
+                                <a class="dropdown-item" asp-controller="Admin" asp-action="ElectionDetail" asp-route-id="4" asp-route-tab="settings">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="3"></circle>
                                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                                     </svg>
                                     <span>Settings</span>
-                                </button>
+                                </a>
                             </li>
                         </ul>
                     </div>

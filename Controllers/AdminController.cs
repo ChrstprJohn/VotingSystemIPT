@@ -24,6 +24,14 @@ namespace VotingSystem.Controllers
             return View();
         }
 
+        public IActionResult ElectionDetail(string? id, string? tab)
+        {
+            ViewData["ActivePage"] = "Elections";
+            ViewData["ElectionId"] = id ?? "1";
+            ViewData["ActiveTab"] = !string.IsNullOrEmpty(tab) ? tab.ToLower() : "overview";
+            return View();
+        }
+
         public IActionResult Settings()
         {
             ViewData["ActivePage"] = "Settings";
