@@ -4,28 +4,34 @@ namespace VotingSystem.Controllers.Services
     {
         private LoginResult(
             bool succeeded,
-            string? errorMessage)
+            string? errorMessage,
+            string? role = null)
         {
             Succeeded = succeeded;
             ErrorMessage = errorMessage;
+            Role = role;
         }
 
         public bool Succeeded { get; }
 
         public string? ErrorMessage { get; }
 
-        public static LoginResult Success()
+        public string? Role { get; }
+
+        public static LoginResult Success(string? role = null)
         {
             return new LoginResult(
                 succeeded: true,
-                errorMessage: null);
+                errorMessage: null,
+                role: role);
         }
 
         public static LoginResult Failed(string errorMessage)
         {
             return new LoginResult(
                 succeeded: false,
-                errorMessage: errorMessage);
+                errorMessage: errorMessage,
+                role: null);
         }
     }
 }

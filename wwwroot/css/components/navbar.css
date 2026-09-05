@@ -9,9 +9,9 @@
 }
 
 .main-navbar .navbar-brand {
-  font-weight: 700;
+  font-weight: 500;
   color: var(--color-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .main-navbar .nav-link {

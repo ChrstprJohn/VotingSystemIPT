@@ -10,6 +10,8 @@ namespace VotingSystem.Controllers
         }
 
         [HttpGet]
+        [Route("login")]
+        [Route("account/login")]
         public IActionResult Login(string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -17,6 +19,8 @@ namespace VotingSystem.Controllers
         }
 
         [HttpPost]
+        [Route("login")]
+        [Route("account/login")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
         {
@@ -35,13 +39,22 @@ namespace VotingSystem.Controllers
                 return View(model);
             }
 
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)) return Redirect(returnUrl);
-            
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
 
-            return RedirectToAction("Index", "Home");
+            if (result.Role == "PartylistLeader")
+            {
+                return RedirectToAction("Index", "Partylists");
+            }
+
+            return RedirectToAction("Index", "Admin");
         }
 
         [HttpPost]
+        [Route("logout")]
+        [Route("account/logout")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
