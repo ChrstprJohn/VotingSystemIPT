@@ -24,3 +24,31 @@
 .main-navbar .nav-link.active {
   color: var(--color-primary);
 }
+
+.login-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #2563eb;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.login-btn:hover {
+        background-color: #1d4ed8;
+        color: white;
+}
+
+.navbar-logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover .navbar-logo {
+    transform: scale(1.1) rotate(3deg);
+}

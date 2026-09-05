@@ -1,13 +1,14 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
-using VotingSystem.Models;
-
 namespace VotingSystem.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly AccountService _accountService;
+
+        public AccountController(AccountService accountService)
+        {
+            _accountService = accountService;
+        }
+
         [HttpGet]
         [Route("login")]
         [Route("account/login")]
@@ -30,45 +31,20 @@ namespace VotingSystem.Controllers
                 return View(model);
             }
 
-            // Mock credential check
-            string role;
-            if (model.Username == "admin" && model.Password == "admin123")
+            var result = await _accountService.LoginUserAsync(model);
+
+            if (!result.Succeeded)
             {
-                role = "Administrator";
-            }
-            else if (model.Username == "partylistleader" && model.Password == "partylistleader123")
-            {
-                role = "PartylistLeader";
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                ModelState.AddModelError(string.Empty, result.ErrorMessage!);
                 return View(model);
             }
-
-            var claims = new List<Claim>
-            {
-                new(ClaimTypes.Name, model.Username),
-                new(ClaimTypes.Role, role)
-            };
-
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = model.RememberMe
-            };
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity),
-                authProperties);
 
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
 
-            if (role == "PartylistLeader")
+            if (result.Role == "PartylistLeader")
             {
                 return RedirectToAction("Index", "Partylists");
             }

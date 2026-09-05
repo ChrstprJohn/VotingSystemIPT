@@ -8,27 +8,6 @@ the first fully styled page). Keep this file in sync with those files — if a
 rule here and the CSS disagree, the CSS is the source of truth and this file
 should be corrected.
 
-## Project Structure
-```
-VotingSystemIPT/
-├── wwwroot/
-│   ├── CLAUDE.md              <- this file
-│   ├── css/
-│   │   ├── site.css           <- :root design tokens + global base styles (loaded on every page)
-│   │   └── Login.css          <- page-specific styles for the admin login screen
-│   ├── js/
-│   │   └── site.js
-│   ├── lib/                   <- client libraries restored by libman (bootstrap, jquery, ...)
-│   └── favicon.ico
-├── Views/
-│   ├── Account/
-│   │   └── Login.cshtml       <- consumes Login.css via @section Styles
-│   └── Shared/
-│       └── _LayoutAuth.cshtml <- auth layout: loads bootstrap.min.css, site.css, VotingSystem.styles.css
-├── Controllers/
-├── Models/
-└── Program.cs
-```
 
 There is **no `fonts/` folder and no `styles/global.css`**. Global tokens and
 base element styles live in `wwwroot/css/site.css`. Bootstrap 5 is loaded

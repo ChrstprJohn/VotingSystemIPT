@@ -1,0 +1,43 @@
+﻿.banner-img {
+    width: 100vw;
+    height: 400px;
+    object-fit: cover;
+    display: block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.about-page {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.about-page:hover {
+    transform: scale(1.02);
+    background-color: #fff9db;
+}
+
+.about-page img {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+    margin-right: 30px;
+}
+
+.about-page h1 {
+    margin-bottom: 30px;
+}
+
+
