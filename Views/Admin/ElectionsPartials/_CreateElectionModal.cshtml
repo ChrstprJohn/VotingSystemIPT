@@ -1,303 +1,122 @@
-<!-- Modal: Create New Election with Positions Setup -->
+<!-- Modal: Create New Election (2-Step Wizard) -->
 <div class="modal fade import-modal" id="createElectionModal" tabindex="-1" aria-labelledby="createElectionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="max-width: 500px;">
         <div class="modal-content">
-            <div class="modal-header border-bottom pb-3">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="election-workspace-avatar">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                        </svg>
-                    </div>
-                    <div>
-                        <h5 class="modal-title fw-bold text-dark mb-0" id="createElectionModalLabel">Create New Election</h5>
-                        <p class="text-muted small mb-0">Define election schedule, parameters, and contested ballot positions.</p>
-                    </div>
-                </div>
+            <!-- Modal Header -->
+            <div class="modal-header border-bottom py-3 px-4">
+                <h5 class="modal-title fw-bold text-dark mb-0" id="createElectionModalLabel">Create New Election</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <div class="modal-body p-4">
-                <form id="createElectionForm">
+            <!-- Stepper Progress Header -->
+            <div class="wizard-stepper">
+                <div class="wizard-step-item active" id="wizardStepIndicator1">
+                    <span class="wizard-step-badge">1</span>
+                    <span class="wizard-step-label">General &amp; Schedule</span>
+                </div>
+                <div class="wizard-step-divider" id="wizardStepLine1">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+                <div class="wizard-step-item" id="wizardStepIndicator2">
+                    <span class="wizard-step-badge">2</span>
+                    <span class="wizard-step-label">Ballot Positions</span>
+                </div>
+            </div>
+
+            <div class="modal-body px-4 py-3.5">
+                <form id="createElectionForm" onsubmit="return false;">
                     <!-- ============================================== -->
-                    <!-- SECTION 1: ELECTION DETAILS -->
+                    <!-- STEP 1: ELECTION GENERAL, DESC & SCHEDULE -->
                     <!-- ============================================== -->
-                    <div class="mb-4">
-                        <div class="d-flex align-items-center gap-2 mb-3">
-                            <span class="badge bg-dark text-white rounded-pill px-2.5 py-1">Step 1</span>
-                            <span class="fw-bold text-dark">Election General Information</span>
+                    <div id="wizardPane1" class="wizard-pane">
+                        <div class="mb-3">
+                            <label for="electionTitle" class="form-label small fw-semibold text-dark mb-1.5 d-inline-flex align-items-center">
+                                Election Title <span class="req-star">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="electionTitle" placeholder="e.g. Supreme Student Council General Elections" required autocomplete="off" />
+                            <div class="invalid-feedback" id="electionTitleFeedback">
+                                Please provide a title for the election.
+                            </div>
                         </div>
 
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <label for="electionTitle" class="form-label small fw-semibold text-dark">
-                                    Election Title <span class="text-danger">*</span>
-                                </label>
-                                <input type="text" class="form-control form-control-sm" id="electionTitle" placeholder="e.g. Supreme Student Council General Elections 2026-2027" required />
-                            </div>
-
-                            <div class="col-md-4">
-                                <label for="electionStatus" class="form-label small fw-semibold text-dark">
-                                    Status <span class="text-danger">*</span>
-                                </label>
-                                <select class="form-select form-select-sm" id="electionStatus">
-                                    <option value="preparation" selected>🟡 Preparation (Draft / Filing)</option>
-                                    <option value="upcoming">🔵 Upcoming (Scheduled)</option>
-                                    <option value="ongoing">🟢 Ongoing (Live Voting)</option>
-                                    <option value="completed">⚪ Completed</option>
-                                    <option value="cancelled">🔴 Cancelled</option>
-                                </select>
-                            </div>
-
-                            <div class="col-12">
-                                <label for="electionScope" class="form-label small fw-semibold text-dark">
-                                    Description & Scope <span class="text-muted fw-normal">(Optional)</span>
-                                </label>
-                                <input type="text" class="form-control form-control-sm" id="electionScope" placeholder="e.g. University-Wide Campus, Academic Year 2026-2027" />
-                            </div>
+                        <div class="mb-3">
+                            <label for="electionDesc" class="form-label small fw-semibold text-dark mb-1.5">
+                                Description <span class="text-muted fw-normal">(Optional)</span>
+                            </label>
+                            <textarea class="form-control" id="electionDesc" rows="2" placeholder="Brief details, objectives, or instructions for voters..."></textarea>
                         </div>
-                    </div>
 
-                    <!-- Schedule Section -->
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <div class="p-3 bg-light rounded border">
-                                <span class="small fw-bold text-dark d-block mb-2">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1 text-muted">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    Start Schedule
-                                </span>
-                                <div class="row g-2">
-                                    <div class="col-7">
-                                        <label for="startDate" class="form-label small text-muted mb-1">Start Date</label>
-                                        <input type="date" class="form-control form-control-sm" id="startDate" value="2026-10-15" required />
-                                    </div>
-                                    <div class="col-5">
-                                        <label for="startTime" class="form-label small text-muted mb-1">Start Time</label>
-                                        <input type="time" class="form-control form-control-sm" id="startTime" value="08:00" required />
-                                    </div>
+                        <!-- Schedule Section -->
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-dark mb-1.5 d-inline-flex align-items-center">Start Schedule <span class="req-star">*</span></label>
+                            <div class="row g-2">
+                                <div class="col-7">
+                                    <input type="date" class="form-control" id="startDate" value="2026-10-15" required />
+                                </div>
+                                <div class="col-5">
+                                    <input type="time" class="form-control" id="startTime" value="08:00" required />
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="p-3 bg-light rounded border">
-                                <span class="small fw-bold text-dark d-block mb-2">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1 text-muted">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    End Schedule
-                                </span>
-                                <div class="row g-2">
-                                    <div class="col-7">
-                                        <label for="endDate" class="form-label small text-muted mb-1">End Date</label>
-                                        <input type="date" class="form-control form-control-sm" id="endDate" value="2026-10-16" required />
-                                    </div>
-                                    <div class="col-5">
-                                        <label for="endTime" class="form-label small text-muted mb-1">End Time</label>
-                                        <input type="time" class="form-control form-control-sm" id="endTime" value="17:00" required />
-                                    </div>
+                        <div class="mb-1">
+                            <label class="form-label small fw-semibold text-dark mb-1.5 d-inline-flex align-items-center">End Schedule <span class="req-star">*</span></label>
+                            <div class="row g-2">
+                                <div class="col-7">
+                                    <input type="date" class="form-control" id="endDate" value="2026-10-16" required />
+                                </div>
+                                <div class="col-5">
+                                    <input type="time" class="form-control" id="endTime" value="17:00" required />
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <hr class="my-4" />
-
                     <!-- ============================================== -->
-                    <!-- SECTION 2: CONFIGURE POSITIONS & QUOTAS -->
+                    <!-- STEP 2: CONFIGURE POSITIONS -->
                     <!-- ============================================== -->
-                    <div>
-                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                            <div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge bg-dark text-white rounded-pill px-2.5 py-1">Step 2</span>
-                                    <span class="fw-bold text-dark">Ballot Positions & Partylist Quotas</span>
-                                </div>
-                                <p class="text-muted small mb-0 mt-1">
-                                    Specify which positions will be contested and set candidate limits per partylist.
-                                </p>
-                            </div>
-
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1" id="btnLoadPresetTemplate">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                                    </svg>
-                                    <span>Load Standard Preset</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1" id="btnAddPositionRow">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                    <span>Add Position Row</span>
-                                </button>
-                            </div>
+                    <div id="wizardPane2" class="wizard-pane" style="display: none;">
+                        <!-- Positions Column Headers -->
+                        <div class="row g-2 align-items-center mb-2 px-0 text-muted" style="font-size: 0.725rem; font-weight: 600; letter-spacing: 0.3px;">
+                            <div class="col ps-1">POSITION TITLE</div>
+                            <div class="col-auto text-center" style="width: 85px; letter-spacing: 0.5px;">SEATS</div>
+                            <div class="col-auto text-center text-nowrap" style="width: 85px; font-size: 0.7rem; letter-spacing: 0.2px;">MAX / PARTY</div>
+                            <div class="col-auto" style="width: 32px;"></div>
                         </div>
 
-                        <!-- Dynamic Positions Table -->
-                        <div class="table-responsive border rounded">
-                            <table class="table table-hover align-middle mb-0 small" id="positionsConfigTable">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th style="width: 45px;">#</th>
-                                        <th style="min-width: 220px;">Position Title <span class="text-danger">*</span></th>
-                                        <th style="width: 170px;">
-                                            Winners (Seats) <span class="text-danger">*</span>
-                                            <span class="d-block text-muted fw-normal" style="font-size: 0.725rem;">How many can win?</span>
-                                        </th>
-                                        <th style="width: 190px;">
-                                            Max Per Partylist <span class="text-danger">*</span>
-                                            <span class="d-block text-muted fw-normal" style="font-size: 0.725rem;">Limit candidates/party</span>
-                                        </th>
-                                        <th style="width: 110px; text-align: center;">Allow Abstain</th>
-                                        <th style="width: 60px; text-align: center;">Remove</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="positionsTableBody">
-                                    <!-- Row 1: President -->
-                                    <tr>
-                                        <td class="text-muted fw-bold">1</td>
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm fw-semibold text-dark" value="President" placeholder="e.g. President" required />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="1" min="1" max="50" required />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="1" min="1" max="50" required />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <input class="form-check-input" type="checkbox" checked title="Allow abstain" />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <button type="button" class="btn btn-xs btn-outline-danger py-1 px-2 remove-pos-btn" title="Remove position">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                </svg>
-                                            </button>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Row 2: Vice President -->
-                                    <tr>
-                                        <td class="text-muted fw-bold">2</td>
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm fw-semibold text-dark" value="Vice President" placeholder="e.g. Vice President" required />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="1" min="1" max="50" required />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="1" min="1" max="50" required />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <input class="form-check-input" type="checkbox" checked title="Allow abstain" />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <button type="button" class="btn btn-xs btn-outline-danger py-1 px-2 remove-pos-btn" title="Remove position">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                </svg>
-                                            </button>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Row 3: Secretary General -->
-                                    <tr>
-                                        <td class="text-muted fw-bold">3</td>
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm fw-semibold text-dark" value="Secretary General" placeholder="e.g. Secretary" required />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="1" min="1" max="50" required />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="1" min="1" max="50" required />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <input class="form-check-input" type="checkbox" checked title="Allow abstain" />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <button type="button" class="btn btn-xs btn-outline-danger py-1 px-2 remove-pos-btn" title="Remove position">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                </svg>
-                                            </button>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Row 4: Treasurer -->
-                                    <tr>
-                                        <td class="text-muted fw-bold">4</td>
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm fw-semibold text-dark" value="Treasurer" placeholder="e.g. Treasurer" required />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="1" min="1" max="50" required />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="1" min="1" max="50" required />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <input class="form-check-input" type="checkbox" checked title="Allow abstain" />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <button type="button" class="btn btn-xs btn-outline-danger py-1 px-2 remove-pos-btn" title="Remove position">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                </svg>
-                                            </button>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Row 5: Councilors -->
-                                    <tr>
-                                        <td class="text-muted fw-bold">5</td>
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm fw-semibold text-dark" value="Councilors (Senators)" placeholder="e.g. Councilors" required />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="6" min="1" max="50" required />
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="6" min="1" max="50" required />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <input class="form-check-input" type="checkbox" checked title="Allow abstain" />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <button type="button" class="btn btn-xs btn-outline-danger py-1 px-2 remove-pos-btn" title="Remove position">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                </svg>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <!-- Positions Rows Container -->
+                        <div id="positionsCardsContainer" class="d-flex flex-column gap-2 mb-3">
+                            <!-- Populated dynamically as compact rows -->
                         </div>
+
+                        <!-- Add Position Button -->
+                        <button type="button" class="btn-add-position-dashed w-100 d-inline-flex align-items-center justify-content-center gap-2" id="btnAddPositionCard">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span>Add Position</span>
+                        </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Modal Footer -->
-            <div class="modal-footer border-top pt-3">
-                <button type="button" class="btn btn-sm btn-light border" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-sm btn-dark px-3 fw-medium" data-bs-dismiss="modal">
-                    Create Election & Save Positions
+            <!-- Modal Footer: Step 1 Controls -->
+            <div class="modal-footer border-top py-3 px-4 d-flex justify-content-end" id="wizardFooterStep1">
+                <button type="button" class="btn btn-dark px-4" id="btnWizardNext">
+                    Next
+                </button>
+            </div>
+
+            <!-- Modal Footer: Step 2 Controls -->
+            <div class="modal-footer border-top py-3 px-4 d-flex justify-content-between" id="wizardFooterStep2" style="display: none !important;">
+                <button type="button" class="btn btn-light border px-4" id="btnWizardBack">
+                    Back
+                </button>
+                <button type="button" class="btn btn-dark px-4" id="btnWizardSubmit">
+                    Create Election
                 </button>
             </div>
         </div>

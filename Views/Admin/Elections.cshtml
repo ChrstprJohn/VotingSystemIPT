@@ -35,102 +35,319 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // 1. Dynamic Positions Row Builder in Create Modal
-            const tbody = document.getElementById('positionsTableBody');
-            const btnAddRow = document.getElementById('btnAddPositionRow');
-            const btnLoadPreset = document.getElementById('btnLoadPresetTemplate');
+            // Elements: Wizard Panes, Steppers, and Footers
+            const modalEl = document.getElementById('createElectionModal');
+            const pane1 = document.getElementById('wizardPane1');
+            const pane2 = document.getElementById('wizardPane2');
+            const footerStep1 = document.getElementById('wizardFooterStep1');
+            const footerStep2 = document.getElementById('wizardFooterStep2');
+            const stepInd1 = document.getElementById('wizardStepIndicator1');
+            const stepInd2 = document.getElementById('wizardStepIndicator2');
+            const stepLine1 = document.getElementById('wizardStepLine1');
 
-            function updateRowNumbers() {
-                if (!tbody) return;
-                const rows = tbody.querySelectorAll('tr');
-                rows.forEach((row, index) => {
-                    const numCell = row.querySelector('td:first-child');
-                    if (numCell) numCell.textContent = index + 1;
+            // Wizard Inputs
+            const electionTitleInput = document.getElementById('electionTitle');
+            const electionSchoolYearInput = document.getElementById('electionSchoolYear');
+            const electionScopeInput = document.getElementById('electionScope');
+            const electionDescInput = document.getElementById('electionDesc');
+            const startDateInput = document.getElementById('startDate');
+            const startTimeInput = document.getElementById('startTime');
+            const endDateInput = document.getElementById('endDate');
+            const endTimeInput = document.getElementById('endTime');
+
+            // Buttons & Containers
+            const btnNext = document.getElementById('btnWizardNext');
+            const btnBack = document.getElementById('btnWizardBack');
+            const btnSubmit = document.getElementById('btnWizardSubmit');
+            const cardsContainer = document.getElementById('positionsCardsContainer');
+            const btnAddCard = document.getElementById('btnAddPositionCard');
+            const posCountDisplay = document.getElementById('posCountDisplay');
+            const seatCountDisplay = document.getElementById('seatCountDisplay');
+
+            // Initial Default Standard Positions
+            const initialPositions = [
+                { title: 'President', winners: 1, maxParty: 1 },
+                { title: 'Vice President', winners: 1, maxParty: 1 },
+                { title: 'Secretary General', winners: 1, maxParty: 1 },
+                { title: 'Treasurer', winners: 1, maxParty: 1 },
+                { title: 'Auditor', winners: 1, maxParty: 1 },
+                { title: 'Councilors', winners: 6, maxParty: 6 }
+            ];
+
+            function renderInitialPositions() {
+                if (!cardsContainer) return;
+                cardsContainer.innerHTML = '';
+                initialPositions.forEach((pos, idx) => {
+                    const row = createCardElement(idx + 1, pos.title, pos.winners, pos.maxParty);
+                    cardsContainer.appendChild(row);
                 });
+                updateCounters();
             }
 
-            function createRowHtml(index, title, winners, maxParty, allowAbstain) {
-                return `
-                    <td class="text-muted fw-bold">${index}</td>
-                    <td>
-                        <input type="text" class="form-control form-control-sm fw-semibold text-dark" value="${title}" placeholder="e.g. Representative" required />
-                    </td>
-                    <td>
-                        <input type="number" class="form-control form-control-sm" value="${winners}" min="1" max="50" required />
-                    </td>
-                    <td>
-                        <input type="number" class="form-control form-control-sm" value="${maxParty}" min="1" max="50" required />
-                    </td>
-                    <td style="text-align: center;">
-                        <input class="form-check-input" type="checkbox" ${allowAbstain ? 'checked' : ''} title="Allow abstain" />
-                    </td>
-                    <td style="text-align: center;">
-                        <button type="button" class="btn btn-xs btn-outline-danger py-1 px-2 remove-pos-btn" title="Remove position">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            function updateCounters() {
+                if (!cardsContainer) return;
+                const rows = cardsContainer.querySelectorAll('.position-item');
+                let totalSeats = 0;
+                rows.forEach(row => {
+                    const winnerInput = row.querySelector('.pos-winners-input');
+                    if (winnerInput) {
+                        totalSeats += parseInt(winnerInput.value) || 0;
+                    }
+                });
+                if (posCountDisplay) posCountDisplay.textContent = rows.length;
+                if (seatCountDisplay) seatCountDisplay.textContent = totalSeats;
+            }
+
+            function createCardElement(index, title, winners, maxParty) {
+                const row = document.createElement('div');
+                row.className = 'position-item row g-2 align-items-center';
+
+                row.innerHTML = `
+                    <div class="col">
+                        <input type="text" class="form-control pos-title-input" value="${escapeHtml(title)}" placeholder="Position title (e.g. President)" required />
+                    </div>
+                    <div class="col-auto" style="width: 85px;">
+                        <input type="number" class="form-control text-center pos-winners-input" value="${winners}" min="1" max="50" title="Seats" required />
+                    </div>
+                    <div class="col-auto" style="width: 85px;">
+                        <input type="number" class="form-control text-center pos-party-input" value="${maxParty}" min="1" max="50" title="Max per partylist" required />
+                    </div>
+                    <div class="col-auto" style="width: 32px;">
+                        <button type="button" class="btn btn-link text-muted p-0 remove-pos-btn d-flex align-items-center justify-content-center w-100" title="Remove position" style="height: 38px;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
                                 <line x1="6" y1="6" x2="18" y2="18"></line>
                             </svg>
                         </button>
-                    </td>
+                    </div>
                 `;
+
+                return row;
             }
 
-            if (btnAddRow && tbody) {
-                btnAddRow.addEventListener('click', function () {
-                    const rowCount = tbody.querySelectorAll('tr').length + 1;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = createRowHtml(rowCount, '', 1, 1, true);
-                    tbody.appendChild(tr);
-                    tr.querySelector('input[type="text"]').focus();
-                });
-            }
+            // Step Navigation Functions
+            function goToStep(step) {
+                if (step === 2) {
+                    // Validate Step 1
+                    const title = (electionTitleInput?.value || '').trim();
+                    if (!title) {
+                        electionTitleInput.classList.add('is-invalid');
+                        electionTitleInput.focus();
+                        return false;
+                    }
+                    electionTitleInput.classList.remove('is-invalid');
 
-            if (tbody) {
-                tbody.addEventListener('click', function (e) {
-                    const removeBtn = e.target.closest('.remove-pos-btn');
-                    if (removeBtn) {
-                        const tr = removeBtn.closest('tr');
-                        if (tbody.querySelectorAll('tr').length > 1) {
-                            tr.remove();
-                            updateRowNumbers();
-                        } else {
-                            alert('At least one position is required.');
+                    // Check date/time
+                    if (startDateInput && endDateInput && startDateInput.value && endDateInput.value) {
+                        const start = new Date(`${startDateInput.value}T${startTimeInput?.value || '00:00'}`);
+                        const end = new Date(`${endDateInput.value}T${endTimeInput?.value || '23:59'}`);
+                        if (end <= start) {
+                            alert('End schedule must be after start schedule.');
+                            endDateInput.focus();
+                            return false;
                         }
+                    }
+
+                    // Switch view to Step 2
+                    pane1.style.display = 'none';
+                    footerStep1.style.setProperty('display', 'none', 'important');
+                    pane2.style.display = 'block';
+                    footerStep2.style.setProperty('display', 'flex', 'important');
+
+                    // Update Stepper Indicators
+                    stepInd1.classList.remove('active');
+                    stepInd1.classList.add('completed');
+                    stepLine1.classList.add('completed');
+                    stepInd2.classList.add('active');
+
+                    updateCounters();
+                } else {
+                    // Switch view back to Step 1
+                    pane2.style.display = 'none';
+                    footerStep2.style.setProperty('display', 'none', 'important');
+                    pane1.style.display = 'block';
+                    footerStep1.style.setProperty('display', 'flex', 'important');
+
+                    // Update Stepper Indicators
+                    stepInd2.classList.remove('active');
+                    stepLine1.classList.remove('completed');
+                    stepInd1.classList.remove('completed');
+                    stepInd1.classList.add('active');
+                }
+                return true;
+            }
+
+            if (btnNext) btnNext.addEventListener('click', () => goToStep(2));
+            if (btnBack) btnBack.addEventListener('click', () => goToStep(1));
+
+            // Reset Wizard when modal is closed
+            if (modalEl) {
+                modalEl.addEventListener('hidden.bs.modal', function () {
+                    goToStep(1);
+                    if (electionTitleInput) {
+                        electionTitleInput.classList.remove('is-invalid');
                     }
                 });
             }
 
-            if (btnLoadPreset && tbody) {
-                btnLoadPreset.addEventListener('click', function () {
-                    tbody.innerHTML = '';
-                    const presets = [
-                        { title: 'President', winners: 1, maxParty: 1, abstain: true },
-                        { title: 'Vice President', winners: 1, maxParty: 1, abstain: true },
-                        { title: 'Secretary General', winners: 1, maxParty: 1, abstain: true },
-                        { title: 'Treasurer', winners: 1, maxParty: 1, abstain: true },
-                        { title: 'Auditor', winners: 1, maxParty: 1, abstain: true },
-                        { title: 'Public Relations Officer', winners: 1, maxParty: 1, abstain: true },
-                        { title: 'Councilors (Senators)', winners: 6, maxParty: 6, abstain: true }
-                    ];
-
-                    presets.forEach((item, idx) => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = createRowHtml(idx + 1, item.title, item.winners, item.maxParty, item.abstain);
-                        tbody.appendChild(tr);
-                    });
+            if (electionTitleInput) {
+                electionTitleInput.addEventListener('input', function () {
+                    if (this.value.trim()) {
+                        this.classList.remove('is-invalid');
+                    }
                 });
             }
 
-            // 2. Client-side Search Filtering for Elections Table
+            // Position Add & Remove Events
+            if (btnAddCard && cardsContainer) {
+                btnAddCard.addEventListener('click', function () {
+                    const rowCount = cardsContainer.querySelectorAll('.position-item').length + 1;
+                    const newRow = createCardElement(rowCount, '', 1, 1);
+                    cardsContainer.appendChild(newRow);
+                    updateCounters();
+                    const input = newRow.querySelector('.pos-title-input');
+                    if (input) input.focus();
+                });
+            }
+
+            if (cardsContainer) {
+                cardsContainer.addEventListener('click', function (e) {
+                    const removeBtn = e.target.closest('.remove-pos-btn');
+                    if (removeBtn) {
+                        const row = removeBtn.closest('.position-item');
+                        if (cardsContainer.querySelectorAll('.position-item').length > 1) {
+                            row.remove();
+                            updateCounters();
+                        } else {
+                            alert('At least one position is required for an election.');
+                        }
+                    }
+                });
+
+                cardsContainer.addEventListener('input', function (e) {
+                    if (e.target.classList.contains('pos-winners-input')) {
+                        updateCounters();
+                    }
+                });
+            }
+
+            // Create Election Submission & Dynamic Table Addition
+            if (btnSubmit) {
+                btnSubmit.addEventListener('click', function () {
+                    // Check that all positions have titles
+                    const titleInputs = cardsContainer ? cardsContainer.querySelectorAll('.pos-title-input') : [];
+                    let hasEmptyTitle = false;
+                    titleInputs.forEach(inp => {
+                        if (!inp.value.trim()) {
+                            hasEmptyTitle = true;
+                            inp.classList.add('is-invalid');
+                        } else {
+                            inp.classList.remove('is-invalid');
+                        }
+                    });
+
+                    if (hasEmptyTitle) {
+                        alert('Please provide a title for all configured positions.');
+                        return;
+                    }
+
+                    const title = (electionTitleInput?.value || 'New Election').trim();
+                    const sy = electionSchoolYearInput?.value || '2026-2027';
+                    const scope = (electionScopeInput?.value || 'University-Wide Campus').trim();
+                    const scopeSubtitle = `A.Y. ${sy} &bull; ${escapeHtml(scope)}`;
+                    const sDate = startDateInput?.value || '2026-10-15';
+                    const sTime = startTimeInput?.value || '08:00';
+                    const eDate = endDateInput?.value || '2026-10-16';
+                    const eTime = endTimeInput?.value || '17:00';
+
+                    const sFormatted = new Date(`${sDate}T${sTime}`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    const eFormatted = new Date(`${eDate}T${eTime}`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    const posCount = titleInputs.length;
+
+                    // Dynamically prepend new row to Elections Table
+                    const electionsTbody = document.querySelector('#electionsTable tbody');
+                    if (electionsTbody) {
+                        const newTr = document.createElement('tr');
+                        newTr.className = 'table-success-subtle-transition';
+                        newTr.innerHTML = `
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="status-indicator-pulse prep"></span>
+                                    <div>
+                                        <span class="voter-name-main text-dark">${escapeHtml(title)}</span>
+                                        <span class="voter-email-sub">${scopeSubtitle}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column text-nowrap">
+                                    <span class="text-dark small fw-medium">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1 text-muted">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                        ${sFormatted} &bull; ${sTime}
+                                    </span>
+                                    <span class="text-muted small">
+                                        to ${eFormatted} &bull; ${eTime}
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge-dot warning">
+                                    <span class="dot-indicator warning"></span>
+                                    Preparation
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-light text-dark border small fw-normal">${posCount} Positions</span>
+                                    <span class="badge bg-light text-muted border small fw-normal">0 Candidates</span>
+                                </div>
+                            </td>
+                            <td style="text-align: right;">
+                                <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 px-2.5 py-1" data-bs-toggle="modal" data-bs-target="#electionWorkspaceModal">
+                                    <span>Manage</span>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="9 18 15 12 9 6"></polyline>
+                                    </svg>
+                                </button>
+                            </td>
+                        `;
+                        electionsTbody.insertBefore(newTr, electionsTbody.firstChild);
+                    }
+
+                    // Close modal cleanly
+                    const bsModal = bootstrap.Modal.getInstance(modalEl);
+                    if (bsModal) {
+                        bsModal.hide();
+                    } else {
+                        modalEl.querySelector('[data-bs-dismiss="modal"]')?.click();
+                    }
+
+                    // Reset form fields
+                    if (electionTitleInput) electionTitleInput.value = '';
+                    if (electionScopeInput) electionScopeInput.value = '';
+                    if (electionDescInput) electionDescInput.value = '';
+                    renderInitialPositions();
+                });
+            }
+
+            function escapeHtml(text) {
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+                return (text || '').replace(/[&<>"']/g, function (m) { return map[m]; });
+            }
+
+            // Client-side Search Filtering for Elections Table
             const searchInput = document.getElementById('electionsSearchInput');
             const statusFilter = document.getElementById('electionStatusFilter');
-            const tableRows = document.querySelectorAll('#electionsTable tbody tr');
 
             function filterTable() {
                 const query = (searchInput?.value || '').toLowerCase().trim();
                 const selectedStatus = (statusFilter?.value || 'all').toLowerCase();
+                const currentRows = document.querySelectorAll('#electionsTable tbody tr');
 
-                tableRows.forEach(row => {
+                currentRows.forEach(row => {
                     const text = row.innerText.toLowerCase();
                     const statusText = row.querySelector('td:nth-child(3)')?.innerText.toLowerCase() || '';
 
@@ -143,6 +360,9 @@
 
             if (searchInput) searchInput.addEventListener('input', filterTable);
             if (statusFilter) statusFilter.addEventListener('change', filterTable);
+
+            // Populate initial standard positions into cards
+            renderInitialPositions();
         });
     </script>
 }
