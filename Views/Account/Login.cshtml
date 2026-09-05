@@ -9,126 +9,17 @@
 }
 
 <div class="login-page">
-<<<<<<< HEAD
-    <!-- Left: brand panel -->
-    <section class="login-brand-panel">
-        <div class="login-brand-panel__grid" aria-hidden="true"></div>
-        <div class="login-brand-panel__content">
-           <div class="login-logo-box">
-               <img src="~/image-logo/samplogo.png" alt="QCU Logo">
-           </div>
-           
-            <h1 class="login-brand-panel__title">QCU Voting System</h1>
-            <p class="login-brand-panel__subtitle">Student Voting Portal</p>
-            <p class="login-brand-panel__text">
-                Cast your vote, review the candidates, and follow election results for Quezon City University.
-            </p>
 
-            <div class="login-feature">
-                <div class="login-feature__head">
-                    <span class="login-feature__icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 3 4 6v5c0 5 3.4 8.3 8 10 4.6-1.7 8-5 8-10V6l-8-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
-                            <path d="m9 12 2 2 4-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </span>
-                    <span class="login-feature__title">Secure &amp; Anonymous</span>
-                </div>
-                <p class="login-feature__desc">Every ballot is encrypted and cannot be traced back to a voter.</p>
-            </div>
-
-            <div class="login-feature">
-                <div class="login-feature__head">
-                    <span class="login-feature__icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 19V10M12 19V5M19 19v-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                        </svg>
-                    </span>
-                    <span class="login-feature__title">Live Results</span>
-                </div>
-                <p class="login-feature__desc">Track turnout and standings as the election unfolds.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Right: sign-in card -->
-    <section class="login-form-panel">
-        <div class="login-card">
-            <div class="login-card__body">
-                <a class="login-back-btn" asp-controller="Home" asp-action="Index">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                    Back to Home
-                </a>
-
-                <h2 class="login-card__title">Admin Log in</h2>
-                <p class="login-card__subtitle">Sign in to access your account</p>
-
-                <form asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
-                    <div asp-validation-summary="ModelOnly" class="login-alert" role="alert"></div>
-
-                    <div class="login-field">
-                        <label asp-for="Username" class="login-label"></label>
-                        <div class="login-input">
-                            <span class="login-input__icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.7" />
-                                    <path d="M5 20c0-3.3 3.1-5.5 7-5.5s7 2.2 7 5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-                                </svg>
-                            </span>
-                            <input asp-for="Username" class="login-input__field" placeholder="Enter your username" autocomplete="username" autofocus />
-                        </div>
-                        <span asp-validation-for="Username" class="login-error"></span>
-                    </div>
-
-                    <div class="login-field">
-                        <label asp-for="Password" class="login-label"></label>
-                        <div class="login-input">
-                            <span class="login-input__icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="5" y="10.5" width="14" height="9.5" rx="2" stroke="currentColor" stroke-width="1.7" />
-                                    <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-                                </svg>
-                            </span>
-                            <input asp-for="Password" class="login-input__field" placeholder="Enter your password" autocomplete="current-password" />
-                            <button type="button" class="login-input__toggle" data-password-toggle aria-label="Show password">
-                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
-                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7" />
-                                </svg>
-                            </button>
-                        </div>
-                        <span asp-validation-for="Password" class="login-error"></span>
-                    </div>
-
-                    <div class="login-row">
-                        <label class="login-check">
-                            <input asp-for="RememberMe" />
-                            <span>Remember me</span>
-                        </label>
-                        <a class="login-link" href="#">Forgot password?</a>
-                    </div>
-
-                    <button type="submit" class="login-submit">Sign In</button>
-                </form>
-            </div>
-            <div class="login-card__footer">
-                &copy; @DateTime.Now.Year QCU VotingSystem. All rights reserved.
-            </div>
-        </div>
-    </section>
-=======
     <partial name="LoginPartials/_BrandPanel" model="Model" />
     <partial name="LoginPartials/_LoginForm" model="Model" />
->>>>>>> origin/staging
+
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        document.querySelectorAll('[data-password-toggle]').forEach(function (btn) {
-            btn.addEventListener('click', function () {
+        document.querySelectorAll('[data-password-toggle]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
                 var field = btn.parentElement.querySelector('.login-input__field');
                 var show = field.type === 'password';
                 field.type = show ? 'text' : 'password';
