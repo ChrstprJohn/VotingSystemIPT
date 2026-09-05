@@ -1,60 +1,73 @@
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using MongoDB.Driver;
+using VotingSystem.Models;
+
 namespace VotingSystem.Controllers.Services
 {
     public sealed class AccountService
-{
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public AccountService(IHttpContextAccessor httpContextAccessor)
     {
-        _httpContextAccessor = httpContextAccessor;
-    }
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMongoCollection<UserAccount> _accounts;
 
-    public async Task<LoginResult> LoginUserAsync(LoginViewModel model)
-    {
-        // Mock credential check
-        string role;
-        if (model.Username == "admin" && model.Password == "admin123")
+        public AccountService(IHttpContextAccessor httpContextAccessor, IMongoDatabase database)
         {
-            role = "Administrator";
-        }
-        else if (model.Username == "partylistleader" && model.Password == "partylistleader123")
-        {
-            role = "PartylistLeader";
-        }
-        else
-        {
-            return LoginResult.Failed("Invalid username or password.");
+            _httpContextAccessor = httpContextAccessor;
+            _accounts = database.GetCollection<UserAccount>("users");
         }
 
-        var claims = new List<Claim>
+        public async Task<LoginResult> LoginUserAsync(LoginViewModel model)
         {
-            new(ClaimTypes.Name, model.Username),
-            new(ClaimTypes.Role, role)
-        };
+            var account = await _accounts
+                .Find(a => a.Username == model.Username)
+                .FirstOrDefaultAsync();
 
-        var identity = new ClaimsIdentity(
-            claims,
-            CookieAuthenticationDefaults.AuthenticationScheme);
-
-        var principal = new ClaimsPrincipal(identity);
-
-        var httpContext = _httpContextAccessor.HttpContext;
-
-        if (httpContext is null)
-        {
-            return LoginResult.Failed(
-                "Unable to access the current HTTP context.");
-        }
-
-        await httpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            principal,
-            new AuthenticationProperties
+            if (account is null || account.PasswordHash != HashPassword(model.Password))
             {
-                IsPersistent = model.RememberMe
-            });
+                return LoginResult.Failed("Invalid username or password.");
+            }
 
-        return LoginResult.Success(role);
+            var role = account.Role;
+
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Name, account.Username),
+                new(ClaimTypes.Role, role)
+            };
+
+            var identity = new ClaimsIdentity(
+                claims,
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var principal = new ClaimsPrincipal(identity);
+
+            var httpContext = _httpContextAccessor.HttpContext;
+
+            if (httpContext is null)
+            {
+                return LoginResult.Failed(
+                    "Unable to access the current HTTP context.");
+            }
+
+            await httpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal,
+                new AuthenticationProperties
+                {
+                    IsPersistent = model.RememberMe
+                });
+
+            return LoginResult.Success(role);
+        }
+
+        internal static string HashPassword(string password)
+        {
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var hash = SHA256.HashData(bytes);
+            return Convert.ToHexString(hash);
+        }
     }
-}
 }
