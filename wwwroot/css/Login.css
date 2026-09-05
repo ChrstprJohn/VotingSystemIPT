@@ -140,6 +140,21 @@ body {
   padding: 2rem;
 }
 
+.login-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #64748b;
+  text-decoration: none;
+}
+
+.login-back-btn:hover {
+  color: var(--color-blue-accent);
+}
+
 .login-card__title {
   margin: 0;
   font-size: 1.75rem;

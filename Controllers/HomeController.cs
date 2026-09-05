@@ -12,10 +12,6 @@ namespace VotingSystem.Controllers
         {
             _logger = logger;
         }
-
-        [Route("")]
-        [Route("index")]
-        [Route("home")]
         public IActionResult Index()
         {
             return View();
