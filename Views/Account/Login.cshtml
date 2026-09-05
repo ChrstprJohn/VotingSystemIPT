@@ -5,10 +5,11 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/Login.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/login.css" asp-append-version="true" />
 }
 
 <div class="login-page">
+<<<<<<< HEAD
     <!-- Left: brand panel -->
     <section class="login-brand-panel">
         <div class="login-brand-panel__grid" aria-hidden="true"></div>
@@ -117,6 +118,10 @@
             </div>
         </div>
     </section>
+=======
+    <partial name="LoginPartials/_BrandPanel" model="Model" />
+    <partial name="LoginPartials/_LoginForm" model="Model" />
+>>>>>>> origin/staging
 </div>
 
 @section Scripts {
