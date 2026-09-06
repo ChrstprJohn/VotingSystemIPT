@@ -13,19 +13,19 @@
 }
 
 .banner-container {
-    width: 100%;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: #000;
 }
 
 .banner-img {
-    width: 100vw;
+    width: 100%;
     margin-top: -17px;
     height: 450px;
     object-fit: cover;
     display: block;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
     animation: wipe-down 1s ease-out;
 }
 
