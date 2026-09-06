@@ -12,14 +12,14 @@
     <link rel="stylesheet" href="~/VotingSystem.styles.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
+<body class="site-shell">
     <partial name="_Navbar" />
 
-    <div class="container">
-        <main role="main" class="pb-3">
+    <main role="main" class="site-main">
+        <div class="container pb-5">
             @RenderBody()
-        </main>
-    </div>
+        </div>
+    </main>
 
     <partial name="_Footer" />
 
