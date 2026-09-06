@@ -1,23 +1,37 @@
 /* ==========================================================================
-   Component: Footer
+   Component: Footer (matches the admin sidebar footer's quiet, hairline style)
    ========================================================================== */
-.main-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
-  background-color: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  color: var(--color-text-muted);
+.site-footer {
+  background: #0f172a;
+  margin-top: auto;
 }
 
-.main-footer a {
-  color: var(--color-secondary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
+.site-footer-contact {
+  padding: 3.5rem 0;
+  scroll-margin-top: 84px;
 }
 
-.main-footer a:hover {
-  color: var(--color-primary);
+.site-footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.site-footer-inner {
+  padding: 1.15rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.site-footer-brand {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.site-footer-copy {
+  font-size: 0.8rem;
+  color: #94a3b8;
 }
