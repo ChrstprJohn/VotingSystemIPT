@@ -1,3 +1,44 @@
+
+﻿body {
+    animation: page-fade-in 0.4s ease-in-out;
+}
+
+@keyframes page-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.banner-container {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #000;
+}
+
+.banner-img {
+    width: 100%;
+    margin-top: -17px;
+    height: 450px;
+    object-fit: cover;
+    display: block;
+    animation: wipe-down 1s ease-out;
+}
+
+@keyframes wipe-down {
+    from {
+        clip-path: inset(0 0 100% 0);
+    }
+
+    to {
+        clip-path: inset(0 0 0 0);
+    }
+}
 /* ==========================================================================
    Page: About
    Content blocks reuse .admin-card / .admin-card-header from admin.css;
@@ -18,18 +59,18 @@
   margin-bottom: 0.5rem;
 }
 
-<<<<<<< HEAD
+
 .about-hero-text,
 .about-text {
-  font-size: 0.9rem;
-  color: #64748b;
-  line-height: 1.6;
-  margin: 0;
-=======
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.6;
+}
+
 .about-page:hover {
     transform: scale(1.02);
-    background-color: #dbeeff;
->>>>>>> fb5fe0e973324e4ccf25d8f6851f449bcafe3b60
+    background-color: #000;
+    color: #fff;
 }
 
 .about-steps {
@@ -38,7 +79,6 @@
   gap: 1.25rem;
 }
 
-<<<<<<< HEAD
 .about-step {
   display: flex;
   align-items: flex-start;
@@ -67,7 +107,7 @@
   font-size: 0.85rem;
   color: #64748b;
 }
-=======
+
 .about-page h1 {
     margin-bottom: 40px;
 }
@@ -82,8 +122,9 @@
 }
 
 .purpose-section:hover {
-    background-color: #dbeeff;
-    transform: scale(1.02);
+   transform: scale(1.02);
+    background-color: #000;
+    color: #fff;
 }
 
 .how-it-works-section {
@@ -96,8 +137,9 @@
 }
 
 .how-it-works-section:hover {
-    background-color: #dbeeff;
-    transform: scale(1.02);
+   transform: scale(1.02);
+    background-color: #000;
+    color: #fff;
 }
 
 .marquee-wrapper {
@@ -118,12 +160,13 @@
     flex-shrink: 0;
     padding: 8px;
     border-radius: 12px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .marquee-item:hover {
-    background-color: #CCCCC4;
-    transform: scale(1.05);
+    transform: scale(1.02);
+    background-color: #000;
+    box-shadow: 0 4px 15px rgba(41, 128, 185, 0.4);
 }
 
 .marquee-item img {
@@ -138,7 +181,7 @@
     position: absolute;
     top: 12px;
     left: 12px;
-    background-color: #2980b9;
+    background-color: #d4af37; /* gold */
     color: #fff;
     font-weight: bold;
     font-size: 18px;
@@ -189,8 +232,9 @@
 }
 
 .integrity-section:hover {
-    background-color: #dbeeff;
     transform: scale(1.02);
+    background-color: #000;
+    color: #fff;
 }
 
 .help-section {
@@ -198,21 +242,27 @@
     border-radius: 10px;
     padding: 25px;
     background-color: #fff;
-    margin-bottom: 30px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease, color 0.3s ease;
 }
 
 .help-section:hover {
-    background-color: #dbeeff;
     transform: scale(1.02);
+    background-color: #000;
+    color: #fff;
 }
 
 .help-section a {
     color: #0066cc;
+    font-weight: 600;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 .help-section a:hover {
     text-decoration: underline;
 }
->>>>>>> fb5fe0e973324e4ccf25d8f6851f449bcafe3b60
+
+.help-section:hover a {
+    color: #66b3ff;
+}
+
