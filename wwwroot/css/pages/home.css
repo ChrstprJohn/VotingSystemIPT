@@ -1,35 +1,81 @@
 /* ==========================================================================
    Page: Home (Index, Hero, Features, CTA)
+   Matches the admin dashboard's shadcn-style palette, typography, and cards.
    ========================================================================== */
+
+/* Hero */
 .home-hero {
-  padding: 4rem 1rem 3rem;
+  padding: 4.5rem 1rem 3.5rem;
   text-align: center;
+}
+
+.home-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
 }
 
 .home-hero h1 {
   font-size: 2.75rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: var(--color-text-main);
+  color: #0f172a;
   margin-bottom: 1rem;
 }
 
 .home-hero p {
-  font-size: 1.25rem;
-  color: var(--color-text-muted);
-  max-width: 600px;
+  font-size: 1.1rem;
+  color: #64748b;
+  max-width: 620px;
   margin: 0 auto 2rem;
+  line-height: 1.6;
 }
 
-.home-features {
-  padding: 3rem 0;
+/* Shared one-page section rhythm (Features, About, Contact) */
+.home-section {
+  padding: 3.5rem 0;
+  scroll-margin-top: 84px;
 }
 
-.home-cta {
-  padding: 3rem 1.5rem;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-  color: #ffffff;
-  text-align: center;
-  margin: 2rem 0;
+#home {
+  scroll-margin-top: 84px;
 }
+
+.home-section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+}
+
+.home-section-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.home-feature-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.home-feature-text {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0;
+  line-height: 1.55;
+}
+
+/* The "Ready to Participate?" CTA now lives in the global footer —
+   see .footer-cta* in components/footer.css. */

@@ -1,23 +1,160 @@
 /* ==========================================================================
-   Component: Footer
+   Component: Footer (matches the admin sidebar footer's quiet, hairline style)
    ========================================================================== */
-.main-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
-  background-color: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  color: var(--color-text-muted);
+.site-footer {
+  background: #0f172a;
+  margin-top: auto;
 }
 
-.main-footer a {
-  color: var(--color-secondary);
+.site-footer-contact {
+  padding: 3.5rem 0;
+  scroll-margin-top: 84px;
+}
+
+/* ==========================================================================
+   "Ready to Participate?" CTA (moved out of home.css — sits above the
+   Contact section in the dark footer, so it uses the dark-card treatment
+   that mirrors .contact-card).
+   ========================================================================== */
+.site-footer-cta {
+  padding: 3.5rem 0 0;
+  scroll-margin-top: 84px;
+}
+
+.footer-cta-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2.5rem;
+}
+
+.footer-cta-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 1rem;
+}
+
+.footer-cta-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 0.6rem;
+}
+
+.footer-cta-text {
+  color: #94a3b8;
+  max-width: 420px;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Get Started button: an icon tile + two-line label + a chevron that nudges on hover */
+.footer-cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 1.25rem;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  color: #0f172a;
   text-decoration: none;
-  transition: color var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
-.main-footer a:hover {
-  color: var(--color-primary);
+.footer-cta-button:hover {
+  background: #e2e8f0;
+  border-color: #e2e8f0;
+  color: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.5);
+}
+
+.footer-cta-button-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: rgba(15, 23, 42, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.footer-cta-button-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.footer-cta-button-text strong {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.footer-cta-button-text small {
+  font-size: 0.725rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.footer-cta-button-arrow {
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.footer-cta-button:hover .footer-cta-button-arrow {
+  transform: translateX(4px);
+}
+
+@media (max-width: 767.98px) {
+  .footer-cta-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-cta-button {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.site-footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.site-footer-inner {
+  padding: 1.15rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.site-footer-brand {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.site-footer-copy {
+  font-size: 0.8rem;
+  color: #94a3b8;
 }

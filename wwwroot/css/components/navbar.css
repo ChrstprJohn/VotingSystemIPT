@@ -1,54 +1,106 @@
 /* ==========================================================================
-   Component: Navigation Bar
+   Component: Navigation Bar (matches the admin dashboard's shadcn-style shell)
    ========================================================================== */
-.main-navbar {
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition-normal);
+.site-navbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
 }
 
-.main-navbar .navbar-brand {
+.site-navbar-inner {
+  padding: 0.75rem 0;
+}
+
+.site-navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+}
+
+.site-navbar-brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.site-navbar-brand-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #0f172a;
+}
+
+.site-navbar-collapse {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 1;
+  margin-left: 2rem;
+}
+
+.site-navbar-nav {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+}
+
+.site-navbar-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  color: #64748b;
+  font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-primary);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.site-navbar-link:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.site-navbar-link.active {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.site-navbar-login {
+  font-weight: 500;
   letter-spacing: -0.01em;
 }
 
-.main-navbar .nav-link {
-  font-weight: 500;
-  color: var(--color-secondary);
-  transition: color var(--transition-fast);
-}
+@media (max-width: 767.98px) {
+  .site-navbar-collapse {
+    margin-left: 0;
+    margin-top: 0.85rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
 
-.main-navbar .nav-link:hover,
-.main-navbar .nav-link.active {
-  color: var(--color-primary);
-}
+  .site-navbar-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.15rem;
+  }
 
-.login-btn {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #2563eb;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: 0.2s;
-}
-
-.login-btn:hover {
-        background-color: #1d4ed8;
-        color: white;
-}
-
-.navbar-logo {
-    width: 42px;
-    height: 42px;
-    object-fit: contain;
-    margin-right: 10px;
-    transition: transform 0.3s ease;
-}
-
-.navbar-brand:hover .navbar-logo {
-    transform: scale(1.1) rotate(3deg);
+  .site-navbar-login {
+    align-self: flex-start;
+  }
 }
