@@ -1,0 +1,152 @@
+@{
+    ViewData["Title"] = "Partylists";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin.css" asp-append-version="true" />
+}
+
+@section TopbarActions {
+    <button type="button" class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1 px-3 py-1" data-bs-toggle="modal" data-bs-target="#addPartylistModal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Add Partylist</span>
+    </button>
+}
+
+<div class="container-fluid px-0">
+    <!-- Metrics Row -->
+    <partial name="PartylistsPartials/_PartylistsMetrics" />
+
+    <!-- Main Table Card -->
+    <div class="admin-card">
+        <partial name="PartylistsPartials/_PartylistsToolbar" />
+        <partial name="PartylistsPartials/_PartylistsTable" />
+    </div>
+</div>
+
+<!-- Modals -->
+<partial name="PartylistsPartials/_AddPartylistModal" />
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const pageSize = 5;
+            let currentPage = 1;
+
+            const searchInput = document.getElementById('partylistsSearchInput');
+            const statusFilter = document.getElementById('partylistStatusFilter');
+            const allRows = Array.from(document.querySelectorAll('#partylistsTable tbody tr'));
+            const paginationList = document.getElementById('partylistsPagination');
+            const paginationSummary = document.getElementById('partylistsPaginationSummary');
+            const prevItem = paginationList?.querySelector('[data-page-action="prev"]');
+            const nextItem = paginationList?.querySelector('[data-page-action="next"]');
+
+            function getFilteredRows() {
+                const query = (searchInput?.value || '').toLowerCase().trim();
+                const selectedStatus = (statusFilter?.value || 'all').toLowerCase();
+
+                return allRows.filter(row => {
+                    const text = row.innerText.toLowerCase();
+                    const rowStatus = (row.dataset.status || '').toLowerCase();
+                    const matchesQuery = !query || text.includes(query);
+                    const matchesStatus = selectedStatus === 'all' || rowStatus === selectedStatus;
+                    return matchesQuery && matchesStatus;
+                });
+            }
+
+            function renderPageNumbers(totalPages) {
+                if (!paginationList) return;
+                paginationList.querySelectorAll('.page-item[data-page-number]').forEach(li => li.remove());
+
+                for (let page = 1; page <= totalPages; page++) {
+                    const li = document.createElement('li');
+                    li.className = 'page-item' + (page === currentPage ? ' active' : '');
+                    li.dataset.pageNumber = page;
+                    li.innerHTML = `<a class="page-link" href="#">${page}</a>`;
+                    li.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        currentPage = page;
+                        renderTable();
+                    });
+                    paginationList.insertBefore(li, nextItem);
+                }
+            }
+
+            function renderTable() {
+                const filteredRows = getFilteredRows();
+                const totalItems = filteredRows.length;
+                const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+
+                if (currentPage > totalPages) currentPage = totalPages;
+                if (currentPage < 1) currentPage = 1;
+
+                allRows.forEach(row => { row.style.display = 'none'; });
+
+                const startIndex = (currentPage - 1) * pageSize;
+                const pageRows = filteredRows.slice(startIndex, startIndex + pageSize);
+                pageRows.forEach(row => { row.style.display = ''; });
+
+                renderPageNumbers(totalPages);
+
+                if (prevItem) prevItem.classList.toggle('disabled', currentPage === 1);
+                if (nextItem) nextItem.classList.toggle('disabled', currentPage === totalPages);
+
+                if (paginationSummary) {
+                    if (totalItems === 0) {
+                        paginationSummary.textContent = 'No partylists found';
+                    } else {
+                        const shownFrom = startIndex + 1;
+                        const shownTo = Math.min(startIndex + pageSize, totalItems);
+                        paginationSummary.textContent = `Showing ${shownFrom} to ${shownTo} of ${totalItems} partylists`;
+                    }
+                }
+            }
+
+            if (prevItem) {
+                prevItem.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderTable();
+                    }
+                });
+            }
+
+            if (nextItem) {
+                nextItem.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    currentPage++;
+                    renderTable();
+                });
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    currentPage = 1;
+                    renderTable();
+                });
+            }
+
+            if (statusFilter) {
+                statusFilter.addEventListener('change', function () {
+                    currentPage = 1;
+                    renderTable();
+                });
+            }
+
+            renderTable();
+
+            // Sync party color picker with its hex readout in the Add Partylist modal
+            const colorInput = document.getElementById('partylistColor');
+            const colorHexInput = document.getElementById('partylistColorHex');
+            if (colorInput && colorHexInput) {
+                colorInput.addEventListener('input', function () {
+                    colorHexInput.value = colorInput.value.toUpperCase();
+                });
+            }
+        });
+    </script>
+}

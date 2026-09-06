@@ -24,6 +24,12 @@ namespace VotingSystem.Controllers
             return View();
         }
 
+        public IActionResult Partylists()
+        {
+            ViewData["ActivePage"] = "Partylists";
+            return View();
+        }
+
         public IActionResult Settings()
         {
             ViewData["ActivePage"] = "Settings";
