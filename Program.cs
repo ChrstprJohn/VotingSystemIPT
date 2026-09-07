@@ -11,8 +11,21 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AccountService>();
 
+// Voting-system domain services.
+builder.Services.AddScoped<ElectionService>();
+builder.Services.AddScoped<PositionService>();
+builder.Services.AddScoped<PartylistService>();
+builder.Services.AddScoped<CandidateService>();
+builder.Services.AddScoped<VoterService>();
+builder.Services.AddScoped<BallotService>();
+builder.Services.AddScoped<ReportService>();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddHostedService<DbInitializer>();
+
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
+builder.Services.Configure<MailSettings>(
+    builder.Configuration.GetSection("MailSettings"));
 
 builder.Services.AddSingleton<MongoConnectionNotifier>();
 

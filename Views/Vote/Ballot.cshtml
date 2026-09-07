@@ -1,0 +1,108 @@
+@model VotingSystem.Models.ViewModels.BallotViewModel
+@{
+    ViewData["Title"] = "Ballot";
+    Layout = "_LayoutAuth";
+    var ballotError = TempData["BallotError"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/vote.css" asp-append-version="true" />
+}
+
+<div class="ballot-shell">
+    <div class="ballot-card">
+        <header class="ballot-head">
+            <h1>@Model.Election.Title</h1>
+            <p>Select up to the number of seats for each position. You can review before submitting.</p>
+        </header>
+
+        @if (ballotError is not null)
+        {
+            <div class="vote-alert vote-alert--error">@ballotError</div>
+        }
+
+        <form method="post" action="/vote/ballot/@Model.Token" id="ballotForm">
+            @Html.AntiForgeryToken()
+
+            <div id="ballotStep">
+                @foreach (var bp in Model.Positions)
+                {
+                    <section class="ballot-position" data-seats="@bp.Position.Seats" data-name="@bp.Position.Name">
+                        <div class="ballot-position__head">
+                            <h2>@bp.Position.Name</h2>
+                            <span>Choose up to @bp.Position.Seats</span>
+                        </div>
+                        @if (bp.Candidates.Count == 0)
+                        {
+                            <p class="text-muted">No candidates for this position.</p>
+                        }
+                        @foreach (var c in bp.Candidates)
+                        {
+                            <label class="ballot-choice">
+                                <input type="@(bp.Position.Seats == 1 ? "radio" : "checkbox")"
+                                       name="pos_@bp.Position.Id" value="@c.CandidateId" />
+                                <span class="ballot-choice__name">@c.FullName</span>
+                                <span class="ballot-choice__party">@c.PartylistName</span>
+                            </label>
+                        }
+                    </section>
+                }
+                <div class="ballot-actions">
+                    <button type="button" class="vote-btn" id="toReview">Review my ballot</button>
+                </div>
+            </div>
+
+            <div id="reviewStep" hidden>
+                <h2 class="ballot-review__title">Review your ballot</h2>
+                <div id="reviewBody"></div>
+                <div class="ballot-actions">
+                    <button type="button" class="vote-btn vote-btn--ghost" id="backToBallot">Back</button>
+                    <button type="submit" class="vote-btn" id="confirmSubmit">Confirm &amp; submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var form = document.getElementById('ballotForm');
+        var ballotStep = document.getElementById('ballotStep');
+        var reviewStep = document.getElementById('reviewStep');
+        var reviewBody = document.getElementById('reviewBody');
+
+        // Enforce max selections for multi-seat checkbox groups.
+        document.querySelectorAll('.ballot-position').forEach(function (sec) {
+            var seats = parseInt(sec.getAttribute('data-seats'), 10);
+            if (seats <= 1) return;
+            sec.addEventListener('change', function () {
+                var checked = sec.querySelectorAll('input:checked');
+                if (checked.length > seats) {
+                    event.target.checked = false;
+                    alert('You can choose at most ' + seats + ' for ' + sec.getAttribute('data-name') + '.');
+                }
+            });
+        });
+
+        document.getElementById('toReview').addEventListener('click', function () {
+            var html = '';
+            document.querySelectorAll('.ballot-position').forEach(function (sec) {
+                var name = sec.getAttribute('data-name');
+                var picks = Array.from(sec.querySelectorAll('input:checked')).map(function (i) {
+                    return i.closest('.ballot-choice').querySelector('.ballot-choice__name').textContent;
+                });
+                html += '<div class="ballot-review__row"><strong>' + name + '</strong><span>' +
+                    (picks.length ? picks.join(', ') : '<em>No selection</em>') + '</span></div>';
+            });
+            reviewBody.innerHTML = html;
+            ballotStep.hidden = true;
+            reviewStep.hidden = false;
+            window.scrollTo(0, 0);
+        });
+
+        document.getElementById('backToBallot').addEventListener('click', function () {
+            reviewStep.hidden = true;
+            ballotStep.hidden = false;
+        });
+    </script>
+}

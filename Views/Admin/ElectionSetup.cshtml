@@ -1,0 +1,94 @@
+@model VotingSystem.Models.ViewModels.ElectionSetupViewModel
+@{
+    ViewData["Title"] = "Election setup";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/election-setup.css" asp-append-version="true" />
+}
+
+@section TopbarActions {
+    <a class="btn btn-sm btn-outline-secondary" asp-action="Elections">Back to elections</a>
+    @if (Model.IsPublished)
+    {
+        <a class="btn btn-sm btn-dark" asp-action="Reports" asp-route-id="@Model.Election.Id">Reports</a>
+    }
+}
+
+<partial name="_Flash" />
+
+<div class="setup-header admin-card mb-4">
+    <div class="admin-card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+            <h2 class="admin-card-title mb-1">@Model.Election.Title</h2>
+            <p class="text-muted small mb-0">
+                @Model.Status
+                @if (Model.IsScheduleOnly) { <span>· published — only the schedule can still change</span> }
+                @if (Model.IsFullyLocked) { <span>· voting has begun — everything is locked</span> }
+            </p>
+        </div>
+        <ol class="setup-steps list-unstyled d-flex flex-wrap gap-2 mb-0 small">
+            <li><a href="#step-1">1 · Details</a></li>
+            <li><a href="#step-2">2 · Positions</a></li>
+            <li><a href="#step-3">3 · Party lists</a></li>
+            <li><a href="#step-4">4 · Voters</a></li>
+            <li><a href="#step-5">5 · Review &amp; publish</a></li>
+        </ol>
+    </div>
+</div>
+
+<partial name="ElectionSetupPartials/_Step1Details" model="Model" />
+<partial name="ElectionSetupPartials/_Step2Positions" model="Model" />
+<partial name="ElectionSetupPartials/_Step3Partylists" model="Model" />
+<partial name="ElectionSetupPartials/_Step4Voters" model="Model" />
+<partial name="ElectionSetupPartials/_Step5Review" model="Model" />
+
+@section Scripts {
+    <script>
+        // Jump to the step the last save touched.
+        var anchor = '@(TempData["FlashAnchor"] as string ?? "")';
+        if (anchor) { document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' }); }
+
+        // Step 2 — dynamic position rows.
+        (function () {
+            var tbody = document.getElementById('positionsBody');
+            if (!tbody) return;
+
+            function rowHtml(name, seats, min, max) {
+                return '<td><input type="text" name="posName" class="form-control form-control-sm" value="' + (name || '') + '" placeholder="Position name" required></td>' +
+                    '<td><input type="number" name="posSeats" class="form-control form-control-sm" min="1" value="' + (seats || 1) + '" required></td>' +
+                    '<td><input type="number" name="posMin" class="form-control form-control-sm" min="0" value="' + (min || 1) + '" required></td>' +
+                    '<td><input type="number" name="posMax" class="form-control form-control-sm" min="1" value="' + (max || 1) + '" required></td>' +
+                    '<td class="text-center"><button type="button" class="btn btn-xs btn-outline-danger removeRow">&times;</button></td>';
+            }
+            function addRow(n, s, mn, mx) {
+                var tr = document.createElement('tr');
+                tr.innerHTML = rowHtml(n, s, mn, mx);
+                tbody.appendChild(tr);
+            }
+            document.getElementById('addPositionRow')?.addEventListener('click', function () { addRow('', 1, 1, 1); });
+            document.getElementById('loadDefaultPositions')?.addEventListener('click', function () {
+                tbody.innerHTML = '';
+                addRow('President', 1, 1, 1);
+                addRow('Vice President', 1, 1, 1);
+                addRow('Senator', 12, 1, 12);
+            });
+            tbody.addEventListener('click', function (e) {
+                if (e.target.classList.contains('removeRow')) {
+                    if (tbody.querySelectorAll('tr').length > 1) e.target.closest('tr').remove();
+                }
+            });
+        })();
+
+        // Copy-to-clipboard for leader links.
+        document.querySelectorAll('[data-copy]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                navigator.clipboard.writeText(btn.getAttribute('data-copy')).then(function () {
+                    var t = btn.textContent; btn.textContent = 'Copied!';
+                    setTimeout(function () { btn.textContent = t; }, 1200);
+                });
+            });
+        });
+    </script>
+}

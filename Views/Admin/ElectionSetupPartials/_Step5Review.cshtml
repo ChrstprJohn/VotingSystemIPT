@@ -1,0 +1,94 @@
+@model VotingSystem.Models.ViewModels.ElectionSetupViewModel
+@{
+    var e = Model.Election;
+    var start = e.StartAt.ToLocalTime();
+    var end = e.EndAt.ToLocalTime();
+}
+
+<div class="admin-card mb-4" id="step-5">
+    <div class="admin-card-header d-flex align-items-center gap-2">
+        <span class="badge bg-dark rounded-pill">Step 5</span>
+        <span class="admin-card-title">Review &amp; publish</span>
+    </div>
+    <div class="admin-card-body">
+        <ul class="list-unstyled mb-3">
+            @foreach (var item in Model.Checklist.Items)
+            {
+                <li class="d-flex align-items-start gap-2 py-2 border-bottom">
+                    <span class="@(item.Ok ? "text-success" : "text-danger") fw-bold">@(item.Ok ? "✓" : "✕")</span>
+                    <span>
+                        <span class="fw-semibold">@item.Label</span>
+                        <span class="d-block text-muted small">@item.Detail</span>
+                    </span>
+                </li>
+            }
+        </ul>
+
+        @if (!Model.IsPublished)
+        {
+            <form asp-action="Publish" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@e.Id" />
+                <button type="submit" class="btn btn-sm btn-dark px-4" @(Model.Checklist.CanPublish ? "" : "disabled")>
+                    Publish election
+                </button>
+                @if (!Model.Checklist.CanPublish)
+                {
+                    <span class="text-muted small ms-2">All items must pass before publishing.</span>
+                }
+            </form>
+            <p class="text-muted small mt-2 mb-0">
+                After publishing, everything is locked except the voting start/end time — and that only until voting begins.
+            </p>
+        }
+        else if (Model.IsScheduleOnly)
+        {
+            <div class="alert alert-info small">Published. You can still adjust the schedule until voting begins.</div>
+            <form asp-action="UpdateSchedule" method="post" class="row g-2 align-items-end">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@e.Id" />
+                <div class="col-auto"><label class="form-label small fw-semibold">Start date</label>
+                    <input type="date" name="startDate" class="form-control form-control-sm" value="@start.ToString("yyyy-MM-dd")" /></div>
+                <div class="col-auto"><label class="form-label small fw-semibold">Start time</label>
+                    <input type="time" name="startTime" class="form-control form-control-sm" value="@start.ToString("HH:mm")" /></div>
+                <div class="col-auto"><label class="form-label small fw-semibold">End date</label>
+                    <input type="date" name="endDate" class="form-control form-control-sm" value="@end.ToString("yyyy-MM-dd")" /></div>
+                <div class="col-auto"><label class="form-label small fw-semibold">End time</label>
+                    <input type="time" name="endTime" class="form-control form-control-sm" value="@end.ToString("HH:mm")" /></div>
+                <div class="col-auto"><button type="submit" class="btn btn-sm btn-dark">Update schedule</button></div>
+            </form>
+
+            <hr />
+            <form asp-action="SendInvitations" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@e.Id" />
+                <button type="submit" class="btn btn-sm btn-outline-secondary">Email invitations to all eligible voters</button>
+            </form>
+        }
+        else if (Model.Status == PublicElectionStatus.Ongoing)
+        {
+            <div class="alert alert-warning small">
+                Voting is live and the election is locked. You can end it early — no further
+                ballots will be accepted and the reports become final. This cannot be undone.
+            </div>
+            <div class="d-flex gap-2">
+                <form asp-action="CloseElection" method="post"
+                      onsubmit="return confirm('End this election now? Voting closes immediately and cannot be reopened.');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@e.Id" />
+                    <button type="submit" class="btn btn-sm btn-outline-danger">End election now</button>
+                </form>
+                <a asp-action="Reports" asp-route-id="@e.Id" class="btn btn-sm btn-dark">View live reports</a>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-secondary small mb-0">
+                Voting is closed@(e.ClosedAt is not null
+                    ? $" — ended manually on {e.ClosedAt.Value.ToLocalTime():MMM d, yyyy h:mm tt}"
+                    : "").
+                <a asp-action="Reports" asp-route-id="@e.Id">View reports</a>.
+            </div>
+        }
+    </div>
+</div>

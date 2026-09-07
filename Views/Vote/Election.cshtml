@@ -1,0 +1,70 @@
+@model VotingSystem.Models.ViewModels.PublicElectionCard
+@using VotingSystem.Models.Domain
+@{
+    ViewData["Title"] = Model.Election.Title;
+    var e = Model.Election;
+    var verifyError = TempData["VerifyError"] as string;
+    var verifyOk = TempData["VerifyOk"] as string;
+    var verifyLink = TempData["VerifyLink"] as string;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/vote.css" asp-append-version="true" />
+}
+
+<div class="vote-detail">
+    <img src="@e.ImagePath" alt="" class="vote-detail__img" />
+    <span class="vote-chip vote-chip--@Model.Status.ToString().ToLower()">@Model.Status</span>
+    <h1>@e.Title</h1>
+    <p class="vote-detail__lead">@e.Description</p>
+
+    <dl class="vote-detail__meta">
+        <div><dt>Opens</dt><dd>@e.StartAt.ToLocalTime().ToString("dddd, MMMM d, yyyy 'at' h:mm tt")</dd></div>
+        <div><dt>Closes</dt><dd>@e.EndAt.ToLocalTime().ToString("dddd, MMMM d, yyyy 'at' h:mm tt")</dd></div>
+    </dl>
+
+    @if (!string.IsNullOrWhiteSpace(e.Instructions))
+    {
+        <div class="vote-detail__instructions">
+            <h2>Instructions</h2>
+            <p>@e.Instructions</p>
+        </div>
+    }
+
+    @if (verifyError is not null)
+    {
+        <div class="vote-alert vote-alert--error">@verifyError</div>
+    }
+    @if (verifyOk is not null)
+    {
+        <div class="vote-alert">
+            @verifyOk
+            @if (verifyLink is not null)
+            {
+                <div class="mt-2"><a href="@verifyLink">@verifyLink</a></div>
+            }
+        </div>
+    }
+
+    @if (Model.Status == PublicElectionStatus.Ongoing)
+    {
+        <form method="post" asp-action="Verify" class="vote-verify">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="electionId" value="@e.Id" />
+            <h2>Verify to vote</h2>
+            <p>Enter your student number and registered school email. We will send a secure ballot link to your email.</p>
+            <label><span>Student number</span><input type="text" name="studentNumber" required /></label>
+            <label><span>School email</span><input type="email" name="email" required /></label>
+            <button type="submit" class="vote-btn">Continue</button>
+        </form>
+    }
+    else if (Model.Status == PublicElectionStatus.Upcoming)
+    {
+        <div class="vote-alert">This election has not started yet. Check back on
+            @e.StartAt.ToLocalTime().ToString("MMMM d, yyyy 'at' h:mm tt").</div>
+    }
+    else
+    {
+        <div class="vote-alert">Voting is closed. Results are published by the election administrator.</div>
+    }
+</div>
