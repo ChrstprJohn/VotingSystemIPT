@@ -116,9 +116,14 @@ namespace VotingSystem.Controllers
 
         // ---- Elections list -------------------------------------------------
 
-        public async Task<IActionResult> Elections()
+        public async Task<IActionResult> Elections(string? manage = null)
         {
             ViewData["ActivePage"] = "Elections";
+            if (!string.IsNullOrEmpty(manage))
+            {
+                TempData["OpenManage"] = manage;
+            }
+
             var now = DateTime.UtcNow;
             var elections = await _elections.GetAllAsync();
             var list = new List<ElectionListItem>();
@@ -148,22 +153,28 @@ namespace VotingSystem.Controllers
         {
             var election = await _elections.CreateDraftAsync(title ?? string.Empty);
             await _positions.SeedDefaultsAsync(election.Id);
-            TempData["Flash"] = "Draft election created. Complete the setup below.";
-            return RedirectToAction(nameof(ElectionSetup), new { id = election.Id });
+            TempData["Flash"] = "Draft election created. Finish the setup in the Manage panel.";
+            TempData["OpenManage"] = election.Id;
+            return RedirectToAction(nameof(Elections));
         }
 
-        // ---- Election setup (5 steps) --------------------------------------
+        // ---- Election setup (now a Manage modal on the Elections list) -----
 
-        public async Task<IActionResult> ElectionSetup(string id)
+        // Kept so old links/bookmarks land somewhere sensible.
+        public IActionResult ElectionSetup(string id) => RedirectToAction(nameof(Elections));
+
+        // Returns just the Manage-modal panel (internal nav + progress + sections).
+        [HttpGet]
+        public async Task<IActionResult> ManagePanel(string id)
         {
-            ViewData["ActivePage"] = "Elections";
             var vm = await BuildSetupViewModelAsync(id);
             if (vm is null)
             {
                 return NotFound();
             }
 
-            return View(vm);
+            ViewData["ActiveSection"] = "step-1";
+            return PartialView("ElectionSetupPartials/_ManagePanel", vm);
         }
 
         [HttpPost]
@@ -521,10 +532,10 @@ namespace VotingSystem.Controllers
 
         // ---- Placeholder pages kept from the original scaffold ------------
 
-        public async Task<IActionResult> Voters()
+        public IActionResult History()
         {
-            ViewData["ActivePage"] = "Voters";
-            return View(await _elections.GetAllAsync());
+            ViewData["ActivePage"] = "History";
+            return View();
         }
 
         public IActionResult Settings()
@@ -568,12 +579,34 @@ namespace VotingSystem.Controllers
             };
         }
 
+        private bool IsAjax =>
+            Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
+        /// <summary>
+        /// After a setup save: re-render the Manage panel in place for AJAX callers,
+        /// otherwise fall back to the Elections list.
+        /// </summary>
         private async Task<IActionResult> RedirectSetup(string id, string anchor, string flash)
         {
+            if (IsAjax)
+            {
+                var vm = await BuildSetupViewModelAsync(id);
+                if (vm is null)
+                {
+                    return NotFound();
+                }
+
+                ViewData["ActiveSection"] = anchor;
+                ViewData["ModalFlash"] = flash;
+                ViewData["ModalImportErrors"] = TempData["ImportErrors"] as string;
+                TempData.Remove("ImportErrors");
+                return PartialView("ElectionSetupPartials/_ManagePanel", vm);
+            }
+
             TempData["Flash"] = flash;
-            TempData["FlashAnchor"] = anchor;
+            TempData["OpenManage"] = id;
             await Task.CompletedTask;
-            return Redirect(Url.Action(nameof(ElectionSetup), new { id })! + "#" + anchor);
+            return RedirectToAction(nameof(Elections));
         }
 
         private string LeaderLink(string token)

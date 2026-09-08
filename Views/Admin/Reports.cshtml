@@ -9,7 +9,7 @@
 }
 
 @section TopbarActions {
-    <a class="btn btn-sm btn-outline-secondary" asp-action="ElectionSetup" asp-route-id="@Model.Election.Id">Back to setup</a>
+    <a class="btn btn-sm btn-outline-secondary" asp-action="Elections" asp-route-manage="@Model.Election.Id">Back to setup</a>
     <button type="button" class="btn btn-sm btn-dark" onclick="window.print()">Print</button>
 }
 

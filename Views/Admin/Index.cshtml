@@ -105,7 +105,7 @@ else
                     {
                         <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
                             <span><span class="fw-semibold">@a.ElectionTitle</span> — <span class="text-muted">@a.Message</span></span>
-                            <a class="btn btn-xs btn-outline-secondary" asp-action="ElectionSetup" asp-route-id="@a.ElectionId">Open setup</a>
+                            <a class="btn btn-xs btn-outline-secondary" asp-action="Elections" asp-route-manage="@a.ElectionId">Open setup</a>
                         </li>
                     }
                 </ul>
@@ -159,7 +159,7 @@ else
                                     <span class="badge bg-light text-dark border">@item.EligibleVoters voters</span>
                                 </td>
                                 <td style="text-align:right;">
-                                    <a class="btn btn-xs btn-dark" asp-action="ElectionSetup" asp-route-id="@item.Election.Id">Manage</a>
+                                    <a class="btn btn-xs btn-dark" asp-action="Elections" asp-route-manage="@item.Election.Id">Manage</a>
                                     @if (item.Status == VotingSystem.Models.Domain.PublicElectionStatus.Ongoing
                                        || item.Status == VotingSystem.Models.Domain.PublicElectionStatus.Closed)
                                     {

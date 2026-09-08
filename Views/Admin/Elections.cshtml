@@ -9,10 +9,16 @@
         VotingSystem.Models.Domain.PublicElectionStatus.Draft => "warning",
         _ => "inactive"
     };
+
+    string StatusText(VotingSystem.Models.Domain.PublicElectionStatus s) =>
+        s == VotingSystem.Models.Domain.PublicElectionStatus.Draft ? "Draft" : s.ToString();
+
+    var openManage = TempData["OpenManage"] as string;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/pages/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/election-setup.css" asp-append-version="true" />
 }
 
 @section TopbarActions {
@@ -27,50 +33,51 @@
 <div class="admin-card">
     <div class="admin-card-header d-flex justify-content-between align-items-center">
         <span class="admin-card-title">All elections</span>
-        <input type="text" class="voters-search-input" id="electionsSearchInput" placeholder="Search title or description..." style="max-width: 320px;" />
+        <input type="text" class="voters-search-input" id="electionsSearchInput" placeholder="Search title or ID..." style="max-width: 320px;" />
     </div>
     <div class="admin-table-container">
         <table class="admin-table" id="electionsTable">
             <thead>
                 <tr>
-                    <th>Title &amp; scope</th>
-                    <th>Schedule</th>
+                    <th>Election ID</th>
+                    <th>Election title</th>
+                    <th>Start</th>
+                    <th>End</th>
                     <th>Status</th>
-                    <th>Ballot setup</th>
                     <th style="text-align:right;">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @if (Model.Count == 0)
                 {
-                    <tr><td colspan="5" class="text-center text-muted py-4">No elections yet.</td></tr>
+                    <tr><td colspan="6" class="text-center text-muted py-4">No elections yet.</td></tr>
                 }
                 @foreach (var item in Model)
                 {
+                    var completed = item.Status is VotingSystem.Models.Domain.PublicElectionStatus.Closed;
                     <tr>
+                        <td><span class="election-id-cell">@item.Election.Id</span></td>
                         <td>
                             <span class="voter-name-main text-dark">@item.Election.Title</span>
                             <span class="voter-email-sub">@item.Election.Description</span>
                         </td>
                         <td class="small text-muted">
-                            @item.Election.StartAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")<br />
-                            to @item.Election.EndAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")
+                            @item.Election.StartAt.ToLocalTime().ToString("MMM d, yyyy")<br />
+                            @item.Election.StartAt.ToLocalTime().ToString("h:mm tt")
+                        </td>
+                        <td class="small text-muted">
+                            @item.Election.EndAt.ToLocalTime().ToString("MMM d, yyyy")<br />
+                            @item.Election.EndAt.ToLocalTime().ToString("h:mm tt")
                         </td>
                         <td>
                             <span class="status-badge-dot @StatusBadge(item.Status)">
                                 <span class="dot-indicator @StatusBadge(item.Status)"></span>
-                                @item.Status
+                                @StatusText(item.Status)
                             </span>
                         </td>
-                        <td class="small">
-                            <span class="badge bg-light text-dark border">@item.PositionCount positions</span>
-                            <span class="badge bg-light text-dark border">@item.PartylistCount party lists</span>
-                            <span class="badge bg-light text-dark border">@item.CandidateCount candidates</span>
-                        </td>
                         <td style="text-align:right;">
-                            <a class="btn btn-xs btn-dark" asp-action="ElectionSetup" asp-route-id="@item.Election.Id">Manage</a>
-                            @if (item.Status is VotingSystem.Models.Domain.PublicElectionStatus.Ongoing
-                                or VotingSystem.Models.Domain.PublicElectionStatus.Closed)
+                            <button type="button" class="btn btn-xs btn-dark js-manage-election" data-election-id="@item.Election.Id">Manage</button>
+                            @if (completed)
                             {
                                 <a class="btn btn-xs btn-outline-secondary" asp-action="Reports" asp-route-id="@item.Election.Id">Reports</a>
                             }
@@ -82,6 +89,7 @@
     </div>
 </div>
 
+<!-- Create election -->
 <div class="modal fade" id="createElectionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -96,7 +104,7 @@
                     <input type="text" name="title" class="form-control" required
                            placeholder="e.g. Supreme Student Council General Elections 2026-2027" />
                     <p class="text-muted small mt-2 mb-0">
-                        A draft is created and you continue with the step-by-step setup.
+                        A draft is created and the Manage panel opens so you can finish the setup.
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -108,13 +116,136 @@
     </div>
 </div>
 
+<!-- Manage election (sections loaded over AJAX) -->
+<div class="modal fade" id="manageElectionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Manage election</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0" id="manageModalBody">
+                <div class="text-center text-muted py-5">Loading…</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
-        document.getElementById('electionsSearchInput')?.addEventListener('input', function () {
-            var q = this.value.toLowerCase().trim();
-            document.querySelectorAll('#electionsTable tbody tr').forEach(function (row) {
-                row.style.display = !q || row.innerText.toLowerCase().includes(q) ? '' : 'none';
+        (function () {
+            var searchInput = document.getElementById('electionsSearchInput');
+            searchInput && searchInput.addEventListener('input', function () {
+                var q = this.value.toLowerCase().trim();
+                document.querySelectorAll('#electionsTable tbody tr').forEach(function (row) {
+                    row.style.display = !q || row.innerText.toLowerCase().includes(q) ? '' : 'none';
+                });
             });
-        });
+
+            var manageModalEl = document.getElementById('manageElectionModal');
+            var manageBody = document.getElementById('manageModalBody');
+            var manageModal = new bootstrap.Modal(manageModalEl);
+
+            function loadPanel(url, opts) {
+                return fetch(url, Object.assign({ headers: { 'X-Requested-With': 'XMLHttpRequest' } }, opts || {}))
+                    .then(function (r) {
+                        if (!r.ok) throw new Error('Request failed (' + r.status + ')');
+                        return r.text();
+                    })
+                    .then(function (html) {
+                        manageBody.innerHTML = html;
+                        bindPositionEditor();
+                    });
+            }
+
+            function openManage(id) {
+                manageBody.innerHTML = '<div class="text-center text-muted py-5">Loading…</div>';
+                manageModal.show();
+                loadPanel('@Url.Action("ManagePanel", "Admin")?id=' + encodeURIComponent(id))
+                    .catch(function (e) {
+                        manageBody.innerHTML = '<div class="text-center text-danger py-5">' + e.message + '</div>';
+                    });
+            }
+
+            document.querySelectorAll('.js-manage-election').forEach(function (btn) {
+                btn.addEventListener('click', function () { openManage(btn.getAttribute('data-election-id')); });
+            });
+
+            // AJAX submit for every form inside the Manage panel.
+            manageBody.addEventListener('submit', function (e) {
+                var form = e.target.closest('form');
+                if (!form) return;
+                e.preventDefault();
+
+                var submitter = e.submitter;
+                if (submitter && submitter.disabled) return;
+                if (submitter) submitter.disabled = true;
+
+                var fd = new FormData(form);
+                if (submitter && submitter.name) fd.append(submitter.name, submitter.value || '');
+
+                loadPanel(form.getAttribute('action'), { method: 'post', body: fd })
+                    .catch(function (err) {
+                        if (submitter) submitter.disabled = false;
+                        var alertBox = document.createElement('div');
+                        alertBox.className = 'alert alert-danger m-3';
+                        alertBox.textContent = err.message;
+                        manageBody.prepend(alertBox);
+                    });
+            });
+
+            // Copy-to-clipboard for leader links (delegated — survives re-render).
+            manageBody.addEventListener('click', function (e) {
+                var btn = e.target.closest('[data-copy]');
+                if (!btn) return;
+                navigator.clipboard.writeText(btn.getAttribute('data-copy')).then(function () {
+                    var t = btn.textContent; btn.textContent = 'Copied!';
+                    setTimeout(function () { btn.textContent = t; }, 1200);
+                });
+            });
+
+            // Step 2 — dynamic position rows.
+            function bindPositionEditor() {
+                var tbody = manageBody.querySelector('#positionsBody');
+                if (!tbody) return;
+
+                function rowHtml(name, seats, min, max) {
+                    return '<td><input type="text" name="posName" class="form-control form-control-sm" value="' + (name || '') + '" placeholder="Position name" required></td>' +
+                        '<td><input type="number" name="posSeats" class="form-control form-control-sm" min="1" value="' + (seats || 1) + '" required></td>' +
+                        '<td><input type="number" name="posMin" class="form-control form-control-sm" min="0" value="' + (min || 1) + '" required></td>' +
+                        '<td><input type="number" name="posMax" class="form-control form-control-sm" min="1" value="' + (max || 1) + '" required></td>' +
+                        '<td class="text-center"><button type="button" class="btn btn-xs btn-outline-danger removeRow">&times;</button></td>';
+                }
+                function addRow(n, s, mn, mx) {
+                    var tr = document.createElement('tr');
+                    tr.innerHTML = rowHtml(n, s, mn, mx);
+                    tbody.appendChild(tr);
+                }
+
+                var addBtn = manageBody.querySelector('#addPositionRow');
+                addBtn && addBtn.addEventListener('click', function () { addRow('', 1, 1, 1); });
+
+                var defBtn = manageBody.querySelector('#loadDefaultPositions');
+                defBtn && defBtn.addEventListener('click', function () {
+                    tbody.innerHTML = '';
+                    addRow('President', 1, 1, 1);
+                    addRow('Vice President', 1, 1, 1);
+                    addRow('Senator', 12, 1, 12);
+                });
+
+                tbody.addEventListener('click', function (e) {
+                    if (e.target.classList.contains('removeRow') && tbody.querySelectorAll('tr').length > 1) {
+                        e.target.closest('tr').remove();
+                    }
+                });
+            }
+
+            manageModalEl.addEventListener('hidden.bs.modal', function () {
+                manageBody.innerHTML = '<div class="text-center text-muted py-5">Loading…</div>';
+            });
+
+            var autoOpen = '@openManage';
+            if (autoOpen) { openManage(autoOpen); }
+        })();
     </script>
 }
