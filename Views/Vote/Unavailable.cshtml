@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "Not available";
+    Layout = "_LayoutAuth";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/vote.css" asp-append-version="true" />
+}
+
+<div class="ballot-shell">
+    <div class="ballot-card ballot-card--center">
+        <h1>This ballot is not available</h1>
+        <p>The link may have expired, a ballot may already have been submitted, or voting is not currently open.
+           If you think this is a mistake, contact the election administrator.</p>
+        <a class="vote-btn" href="/vote">Back to elections</a>
+    </div>
+</div>

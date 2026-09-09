@@ -1,0 +1,89 @@
+@model VotingSystem.Models.ViewModels.ElectionReport
+@{
+    ViewData["Title"] = "Reports";
+    ViewData["ActivePage"] = "Elections";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin.css" asp-append-version="true" />
+}
+
+@section TopbarActions {
+    <a class="btn btn-sm btn-outline-secondary" asp-action="Elections" asp-route-manage="@Model.Election.Id">Back to setup</a>
+    <button type="button" class="btn btn-sm btn-dark" onclick="window.print()">Print</button>
+}
+
+<div class="admin-card mb-4">
+    <div class="admin-card-body">
+        <h2 class="admin-card-title mb-1">@Model.Election.Title</h2>
+        <p class="text-muted small mb-0">
+            @Model.Election.StartAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt") –
+            @Model.Election.EndAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")
+            @if (!Model.VotingClosed) { <span class="text-warning">· voting still in progress — figures are provisional</span> }
+        </p>
+    </div>
+</div>
+
+<div class="voters-metrics-row mb-4">
+    <div class="metric-mini-card"><div><div class="metric-mini-label">Total eligible voters</div><div class="metric-mini-val">@Model.TotalEligible</div></div></div>
+    <div class="metric-mini-card"><div><div class="metric-mini-label">Total voters</div><div class="metric-mini-val">@Model.TotalVoters</div></div></div>
+    <div class="metric-mini-card"><div><div class="metric-mini-label">Turnout</div><div class="metric-mini-val">@Model.TurnoutPercent%</div></div></div>
+    <div class="metric-mini-card"><div><div class="metric-mini-label">Non-voters</div><div class="metric-mini-val">@Model.NonVoters.Count</div></div></div>
+</div>
+
+@foreach (var pos in Model.Positions)
+{
+    <div class="admin-card mb-4">
+        <div class="admin-card-header d-flex justify-content-between align-items-center">
+            <span class="admin-card-title">@pos.PositionName</span>
+            <span class="text-muted small">@pos.Seats seat(s) — top @pos.Seats win</span>
+        </div>
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr><th style="width:60px;">Rank</th><th>Candidate</th><th>Party list</th><th style="width:120px;">Votes</th><th style="width:110px;">Result</th></tr>
+                </thead>
+                <tbody>
+                    @if (pos.Candidates.Count == 0)
+                    {
+                        <tr><td colspan="5" class="text-muted text-center py-3">No approved candidates.</td></tr>
+                    }
+                    @foreach (var c in pos.Candidates)
+                    {
+                        <tr>
+                            <td>@c.Rank</td>
+                            <td class="fw-semibold">@c.FullName</td>
+                            <td class="text-muted">@c.PartylistName</td>
+                            <td class="fw-bold">@c.Votes</td>
+                            <td>
+                                @if (c.IsWinner)
+                                {
+                                    <span class="status-badge-dot active"><span class="dot-indicator active"></span>Winner</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<div class="admin-card mb-4">
+    <div class="admin-card-header"><span class="admin-card-title">Non-voter list</span></div>
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead><tr><th>Student number</th><th>Name</th><th>Course</th><th>Section</th></tr></thead>
+            <tbody>
+                @if (Model.NonVoters.Count == 0)
+                {
+                    <tr><td colspan="4" class="text-muted text-center py-3">Everyone eligible has voted.</td></tr>
+                }
+                @foreach (var n in Model.NonVoters)
+                {
+                    <tr><td>@n.StudentNumber</td><td>@n.FullName</td><td class="text-muted">@n.Course</td><td class="text-muted">@n.Section</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
