@@ -19,15 +19,21 @@ builder.Services.AddScoped<CandidateService>();
 builder.Services.AddScoped<VoterService>();
 builder.Services.AddScoped<BallotService>();
 builder.Services.AddScoped<ReportService>();
-builder.Services.AddScoped<EmailService>();
+builder.Services.AddHttpClient<EmailService>();
+builder.Services.AddSingleton<VoterMailService>();
+builder.Services.AddSingleton<VoterMailDispatcher>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<VoterMailDispatcher>());
 builder.Services.AddHostedService<DbInitializer>();
 
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
+builder.Services.Configure<EmailWebhookSettings>(
+    builder.Configuration.GetSection("EmailWebhook"));
 builder.Services.Configure<MailSettings>(
-    builder.Configuration.GetSection("MailSettings"));
+    builder.Configuration.GetSection("Smtp"));
 
 builder.Services.AddSingleton<MongoConnectionNotifier>();
+builder.Services.AddSingleton<EmailNotifier>();
 
 builder.Services.AddSingleton<IMongoClient>(sp =>
 {

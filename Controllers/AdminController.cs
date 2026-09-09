@@ -17,6 +17,8 @@ namespace VotingSystem.Controllers
         private readonly BallotService _ballots;
         private readonly ReportService _reports;
         private readonly EmailService _email;
+        private readonly VoterMailService _voterMail;
+        private readonly VoterMailDispatcher _voterMailQueue;
 
         public AdminController(
             ElectionService elections,
@@ -26,7 +28,9 @@ namespace VotingSystem.Controllers
             VoterService voters,
             BallotService ballots,
             ReportService reports,
-            EmailService email)
+            EmailService email,
+            VoterMailService voterMail,
+            VoterMailDispatcher voterMailQueue)
         {
             _elections = elections;
             _positions = positions;
@@ -36,6 +40,8 @@ namespace VotingSystem.Controllers
             _ballots = ballots;
             _reports = reports;
             _email = email;
+            _voterMail = voterMail;
+            _voterMailQueue = voterMailQueue;
         }
 
         // ---- Dashboard --------------------------------------------------------
@@ -282,7 +288,7 @@ namespace VotingSystem.Controllers
             return await RedirectSetup(id, "step-3",
                 sent
                     ? $"Party list added and the form link was emailed to {pl.LeaderEmail}."
-                    : "Party list added. SMTP is not configured — copy the leader link from the card below.");
+                    : "Party list added. The email webhook is not configured — copy the leader link from the card below.");
         }
 
         [HttpPost]
@@ -332,7 +338,7 @@ namespace VotingSystem.Controllers
             }
 
             return await RedirectSetup(id, "step-3",
-                sent ? $"Form link re-sent to {pl.LeaderEmail}." : "SMTP is not configured — use the copyable link on the card.");
+                sent ? $"Form link re-sent to {pl.LeaderEmail}." : "The email webhook is not configured — use the copyable link on the card.");
         }
 
         [HttpPost]
@@ -466,7 +472,24 @@ namespace VotingSystem.Controllers
             }
 
             await _elections.PublishAsync(id);
-            return await RedirectSetup(id, "step-5", "Election published. It is now live on the public site per its schedule.");
+
+            // On publish, email every voter their form over SMTP (party lists stay
+            // on the webhook). Queued and sent in the background so a class-sized
+            // voter list doesn't hang the Publish request.
+            var voters = await _voters.GetAllVotersAsync(id);
+            if (voters.Count > 0)
+            {
+                _voterMailQueue.Enqueue(new VoterMailJob(voters, vm.Election.Title, PublicElectionLink(id)));
+            }
+
+            var mailNote = !_voterMail.IsConfigured
+                ? " SMTP is not configured, so no voter forms will be emailed — set up the \"Smtp\" settings and use \"Email invitations\"."
+                : voters.Count > 0
+                    ? $" Voter forms are being emailed to {voters.Count} voter(s) in the background."
+                    : string.Empty;
+
+            return await RedirectSetup(id, "step-5",
+                "Election published. It is now live on the public site per its schedule." + mailNote);
         }
 
         [HttpPost]
@@ -500,20 +523,21 @@ namespace VotingSystem.Controllers
                 return await RedirectSetup(id, "step-5", "Publish the election before sending invitations.");
             }
 
-            var voters = await _voters.GetAllVotersAsync(id);
-            var sent = 0;
-            foreach (var voter in voters)
+            if (!_voterMail.IsConfigured)
             {
-                if (await _email.SendInvitationAsync(voter, election.Title,
-                        $"{_email.BaseUrl}/vote/election/{election.Id}"))
-                {
-                    sent++;
-                }
+                return await RedirectSetup(id, "step-5", "No invitations sent — SMTP is not configured.");
+            }
+
+            var voters = await _voters.GetAllVotersAsync(id);
+            if (voters.Count > 0)
+            {
+                _voterMailQueue.Enqueue(new VoterMailJob(voters, election.Title, PublicElectionLink(election.Id)));
             }
 
             return await RedirectSetup(id, "step-5",
-                sent > 0 ? $"Invitations sent to {sent} of {voters.Count} voters."
-                    : "No invitations sent — SMTP is not configured.");
+                voters.Count > 0
+                    ? $"Invitations are being emailed to {voters.Count} voter(s) in the background."
+                    : "No voters have been imported for this election yet.");
         }
 
         // ---- Reports -------------------------------------------------------
@@ -531,12 +555,6 @@ namespace VotingSystem.Controllers
         }
 
         // ---- Placeholder pages kept from the original scaffold ------------
-
-        public IActionResult History()
-        {
-            ViewData["ActivePage"] = "History";
-            return View();
-        }
 
         public IActionResult Settings()
         {
@@ -556,9 +574,10 @@ namespace VotingSystem.Controllers
 
             var positions = await _positions.GetByElectionAsync(id);
             var partylists = await _partylists.GetByElectionAsync(id);
-            var candidateCounts = (await _candidates.GetByElectionAsync(id))
+            var allCandidates = await _candidates.GetByElectionAsync(id);
+            var candidatesByParty = allCandidates
                 .GroupBy(c => c.PartylistId)
-                .ToDictionary(g => g.Key, g => g.Count());
+                .ToDictionary(g => g.Key, g => g.ToList());
             var files = await _voters.GetFilesAsync(id);
             var eligible = await _voters.CountEligibleAsync(id);
 
@@ -566,13 +585,30 @@ namespace VotingSystem.Controllers
             {
                 Election = election,
                 Positions = positions,
-                Partylists = partylists.Select(p => new PartylistCard
+                Partylists = partylists.Select(p =>
                 {
-                    Partylist = p,
-                    CandidateCount = candidateCounts.GetValueOrDefault(p.Id, 0),
-                    LeaderLink = LeaderLink(p.FormToken)
+                    var mine = candidatesByParty.GetValueOrDefault(p.Id, new List<Candidate>());
+                    return new PartylistCard
+                    {
+                        Partylist = p,
+                        CandidateCount = mine.Count,
+                        LeaderLink = LeaderLink(p.FormToken),
+                        CandidatesByPosition = positions.Select(pos => new PartylistCandidateGroup
+                        {
+                            PositionName = pos.Name,
+                            MinPerPartylist = pos.MinPerPartylist,
+                            MaxPerPartylist = pos.MaxPerPartylist,
+                            CandidateNames = mine
+                                .Where(c => c.PositionId == pos.Id)
+                                .OrderBy(c => c.Order)
+                                .Select(c => c.FullName)
+                                .ToList()
+                        }).ToList()
+                    };
                 }).ToList(),
-                CandidateCountByPosition = await _candidates.CountByPositionAsync(id),
+                CandidateCountByPosition = allCandidates
+                    .GroupBy(c => c.PositionId)
+                    .ToDictionary(g => g.Key, g => g.Count()),
                 VoterFiles = files,
                 EligibleVoterCount = eligible,
                 Checklist = PublishValidator.Build(election, positions, partylists, files.Count, eligible)
@@ -618,6 +654,17 @@ namespace VotingSystem.Controllers
             }
 
             return $"{baseUrl}/party-form/{token}";
+        }
+
+        private string PublicElectionLink(string electionId)
+        {
+            var baseUrl = _voterMail.BaseUrl;
+            if (string.IsNullOrWhiteSpace(baseUrl))
+            {
+                baseUrl = $"{Request.Scheme}://{Request.Host}";
+            }
+
+            return $"{baseUrl}/vote/election/{electionId}";
         }
 
         private static int Get(int[]? arr, int i, int fallback) =>

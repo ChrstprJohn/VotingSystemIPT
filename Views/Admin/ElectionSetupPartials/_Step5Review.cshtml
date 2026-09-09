@@ -29,7 +29,7 @@
             <form asp-action="Publish" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@e.Id" />
-                <button type="submit" class="btn btn-sm btn-dark px-4" @(Model.Checklist.CanPublish ? "" : "disabled")>
+                <button type="submit" class="btn btn-sm btn-dark px-4" data-loading-text="Publishing…" @(Model.Checklist.CanPublish ? "" : "disabled")>
                     Publish election
                 </button>
                 @if (!Model.Checklist.CanPublish)
@@ -62,7 +62,7 @@
             <form asp-action="SendInvitations" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@e.Id" />
-                <button type="submit" class="btn btn-sm btn-outline-secondary">Email invitations to all eligible voters</button>
+                <button type="submit" class="btn btn-sm btn-outline-secondary" data-loading-text="Sending…">Email invitations to all eligible voters</button>
             </form>
         }
         else if (Model.Status == PublicElectionStatus.Ongoing)

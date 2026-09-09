@@ -179,14 +179,27 @@
 
                 var submitter = e.submitter;
                 if (submitter && submitter.disabled) return;
-                if (submitter) submitter.disabled = true;
+                if (submitter) {
+                    submitter.disabled = true;
+                    // Show a spinner in the button until the panel re-renders.
+                    submitter.dataset.originalHtml = submitter.innerHTML;
+                    var loadingText = submitter.getAttribute('data-loading-text') || 'Working…';
+                    submitter.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>' +
+                        loadingText;
+                }
 
                 var fd = new FormData(form);
                 if (submitter && submitter.name) fd.append(submitter.name, submitter.value || '');
 
                 loadPanel(form.getAttribute('action'), { method: 'post', body: fd })
                     .catch(function (err) {
-                        if (submitter) submitter.disabled = false;
+                        if (submitter) {
+                            submitter.disabled = false;
+                            if (submitter.dataset.originalHtml !== undefined) {
+                                submitter.innerHTML = submitter.dataset.originalHtml;
+                            }
+                        }
                         var alertBox = document.createElement('div');
                         alertBox.className = 'alert alert-danger m-3';
                         alertBox.textContent = err.message;

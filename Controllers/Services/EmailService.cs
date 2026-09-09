@@ -1,5 +1,6 @@
-using System.Net;
-using System.Net.Mail;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.Extensions.Options;
 using VotingSystem.Configuration;
 using VotingSystem.Models.Domain;
@@ -7,18 +8,29 @@ using VotingSystem.Models.Domain;
 namespace VotingSystem.Controllers.Services
 {
     /// <summary>
-    /// Sends the transactional emails the voting flow needs. When SMTP is not
-    /// configured (blank <c>MailSettings:Host</c>) nothing is sent; the caller
-    /// still has the link to surface in the admin UI, and it is written to the log.
+    /// Delivers the transactional emails the voting flow needs by POSTing them to
+    /// a configured webhook (<c>EmailWebhook:Url</c>). Each request body is JSON
+    /// with <c>party_email</c>, <c>party_subject</c> and <c>party_html</c> (the
+    /// HTML content carrying the link). When the webhook is not configured nothing
+    /// is dispatched; the caller still has the link to surface in the admin UI,
+    /// and it is written to the log.
     /// </summary>
     public sealed class EmailService
     {
-        private readonly MailSettings _settings;
+        private readonly EmailWebhookSettings _settings;
+        private readonly HttpClient _http;
+        private readonly EmailNotifier _notifier;
         private readonly ILogger<EmailService> _logger;
 
-        public EmailService(IOptions<MailSettings> settings, ILogger<EmailService> logger)
+        public EmailService(
+            IOptions<EmailWebhookSettings> settings,
+            HttpClient http,
+            EmailNotifier notifier,
+            ILogger<EmailService> logger)
         {
             _settings = settings.Value;
+            _http = http;
+            _notifier = notifier;
             _logger = logger;
         }
 
@@ -28,90 +40,101 @@ namespace VotingSystem.Controllers.Services
 
         public Task<bool> SendLeaderLinkAsync(Partylist partylist, string electionTitle, string link)
         {
-            var deadline = partylist.SubmissionDeadline is { } d
-                ? d.ToLocalTime().ToString("MMMM d, yyyy h:mm tt")
-                : "the announced deadline";
-
-            var body = $"""
-                <p>Hello {WebUtility.HtmlEncode(partylist.LeaderName)},</p>
-                <p>You have been invited to submit the party list
-                <strong>{WebUtility.HtmlEncode(partylist.Name)}</strong> for
-                <strong>{WebUtility.HtmlEncode(electionTitle)}</strong>.</p>
-                <p>Use the secure link below to fill in your party-list details and candidates.
-                You can save and return to it any time before {WebUtility.HtmlEncode(deadline)}.</p>
-                <p><a href="{link}">{link}</a></p>
-                <p>No account is required. Do not share this link.</p>
-                """;
-
-            return SendAsync(partylist.LeaderEmail, $"Party-list submission — {electionTitle}", body);
+            var (subject, body) = EmailTemplates.LeaderLink(partylist, electionTitle, link);
+            return SendAsync(partylist.LeaderEmail, subject, body);
         }
 
         public Task<bool> SendBallotLinkAsync(Voter voter, string electionTitle, string link)
         {
-            var body = $"""
-                <p>Hello {WebUtility.HtmlEncode(voter.FullName)},</p>
-                <p>Your identity has been verified for <strong>{WebUtility.HtmlEncode(electionTitle)}</strong>.
-                Continue to your ballot using the secure link below.</p>
-                <p><a href="{link}">{link}</a></p>
-                <p>This link is unique to you. Do not share it.</p>
-                """;
-
-            return SendAsync(voter.Email, $"Your ballot link — {electionTitle}", body);
+            var (subject, body) = EmailTemplates.BallotLink(voter, electionTitle, link);
+            return SendAsync(voter.Email, subject, body);
         }
 
         public Task<bool> SendInvitationAsync(Voter voter, string electionTitle, string link)
         {
-            var body = $"""
-                <p>Hello {WebUtility.HtmlEncode(voter.FullName)},</p>
-                <p>You are eligible to vote in <strong>{WebUtility.HtmlEncode(electionTitle)}</strong>.
-                Begin here:</p>
-                <p><a href="{link}">{link}</a></p>
-                """;
-
-            return SendAsync(voter.Email, $"You are invited to vote — {electionTitle}", body);
+            var (subject, body) = EmailTemplates.Invitation(voter, electionTitle, link);
+            return SendAsync(voter.Email, subject, body);
         }
 
+        /// <summary>
+        /// POSTs the email to the configured webhook as
+        /// <c>{ "party_email", "party_subject", "party_html" }</c>. Returns
+        /// <c>true</c> only when the webhook is configured and answers 2xx.
+        /// </summary>
         public async Task<bool> SendAsync(string to, string subject, string htmlBody)
         {
             if (!_settings.IsConfigured)
             {
                 _logger.LogWarning(
-                    "Email not sent (SMTP not configured). To: {To}; Subject: {Subject}. Body: {Body}",
+                    "Email not dispatched (webhook not configured). To: {To}; Subject: {Subject}. Body: {Body}",
                     to, subject, htmlBody);
                 return false;
             }
 
             try
             {
-                using var message = new MailMessage
+                using var request = new HttpRequestMessage(HttpMethod.Post, _settings.Url)
                 {
-                    From = new MailAddress(
-                        string.IsNullOrWhiteSpace(_settings.FromEmail) ? _settings.User : _settings.FromEmail,
-                        _settings.FromName),
-                    Subject = subject,
-                    Body = htmlBody,
-                    IsBodyHtml = true
-                };
-                message.To.Add(to);
-
-                using var client = new SmtpClient(_settings.Host, _settings.Port)
-                {
-                    EnableSsl = _settings.EnableSsl,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(_settings.User, _settings.Password),
-                    Timeout = 20000
+                    Content = JsonContent.Create(new
+                    {
+                        party_email = to,
+                        party_subject = subject,
+                        party_html = htmlBody
+                    })
                 };
 
-                await client.SendMailAsync(message);
-                _logger.LogInformation("Email sent to {To}: {Subject}", to, subject);
+                if (!string.IsNullOrWhiteSpace(_settings.ApiKey))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _settings.ApiKey);
+                }
+
+                using var response = await _http.SendAsync(request);
+                var rawBody = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _notifier.Failed(to, subject, $"HTTP {(int)response.StatusCode}");
+                    return false;
+                }
+
+                _notifier.Sent(to, subject, ExtractMessage(rawBody));
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send email to {To}: {Subject}", to, subject);
+                _notifier.Failed(to, subject, ex.Message);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Pulls the <c>message</c> string from a webhook JSON body such as
+        /// <c>{ "message": "Email Sent!" }</c>. Returns <c>null</c> for an empty
+        /// or non-JSON body.
+        /// </summary>
+        private static string? ExtractMessage(string? body)
+        {
+            if (string.IsNullOrWhiteSpace(body))
+            {
+                return null;
+            }
+
+            try
+            {
+                using var doc = JsonDocument.Parse(body);
+                if (doc.RootElement.ValueKind == JsonValueKind.Object
+                    && doc.RootElement.TryGetProperty("message", out var message)
+                    && message.ValueKind == JsonValueKind.String)
+                {
+                    return message.GetString();
+                }
+            }
+            catch (JsonException)
+            {
+                // A non-JSON body is fine — nothing to extract.
+            }
+
+            return null;
         }
     }
 }

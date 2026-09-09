@@ -97,7 +97,7 @@ namespace VotingSystem.Controllers
 
             TempData["VerifyOk"] = sent
                 ? $"A secure ballot link has been sent to {MaskEmail(voter.Email)}. Check your inbox to continue."
-                : "SMTP is not configured. Use the link below to continue to your ballot.";
+                : "The email webhook is not configured. Use the link below to continue to your ballot.";
             TempData["VerifyLink"] = sent ? null : link;
             return RedirectToAction(nameof(Election), new { id = electionId });
         }
