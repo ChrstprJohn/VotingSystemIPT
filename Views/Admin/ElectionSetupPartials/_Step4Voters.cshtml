@@ -1,0 +1,82 @@
+@model VotingSystem.Models.ViewModels.ElectionSetupViewModel
+@{
+    var locked = !Model.CanEditContent;
+}
+
+<div class="admin-card mb-4" id="step-4">
+    <div class="admin-card-header d-flex align-items-center gap-2">
+        <span class="badge bg-dark rounded-pill">Step 4</span>
+        <span class="admin-card-title">Eligible voters</span>
+    </div>
+    <div class="admin-card-body">
+        <p class="text-muted small">
+            Add one CSV per department/course. Re-uploading a department fully replaces that department's file;
+            other departments are untouched. Required columns: <code>student_number</code>, <code>full_name</code>,
+            <code>email</code>, <code>course</code>, <code>section</code>. The school email is required.
+        </p>
+
+        @if (!locked)
+        {
+            <form asp-action="UploadVoters" method="post" enctype="multipart/form-data"
+                  class="row g-2 align-items-end border rounded p-3 mb-3 bg-light">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Election.Id" />
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold">Department / course name <span class="text-danger">*</span></label>
+                    <input type="text" name="departmentName" class="form-control form-control-sm" placeholder="e.g. Information Technology" required />
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label small fw-semibold">CSV file <span class="text-danger">*</span></label>
+                    <input type="file" name="file" accept=".csv,text/csv" class="form-control form-control-sm" required />
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-sm btn-dark w-100">Upload / replace</button>
+                </div>
+            </form>
+        }
+
+        <div class="table-responsive border rounded">
+            <table class="admin-table mb-0">
+                <thead>
+                    <tr>
+                        <th>Department</th>
+                        <th>File</th>
+                        <th style="width:110px;">Voters</th>
+                        <th style="width:170px;">Uploaded</th>
+                        <th style="width:90px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.VoterFiles.Count == 0)
+                    {
+                        <tr><td colspan="5" class="text-center text-muted py-3">No department files uploaded.</td></tr>
+                    }
+                    @foreach (var f in Model.VoterFiles)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@f.DepartmentName</td>
+                            <td class="small text-muted">@f.FileName</td>
+                            <td>@f.RowCount</td>
+                            <td class="small text-muted">@f.UploadedAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")</td>
+                            <td>
+                                @if (!locked)
+                                {
+                                    <form asp-action="RemoveVoterFile" method="post"
+                                          onsubmit="return confirm('Remove this department file and its voters?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@Model.Election.Id" />
+                                        <input type="hidden" name="voterFileId" value="@f.Id" />
+                                        <button type="submit" class="btn btn-xs btn-outline-danger">Remove</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="small text-muted mt-2 mb-0">
+            Combined voter population: <strong>@Model.EligibleVoterCount</strong> eligible voter(s).
+        </p>
+    </div>
+</div>

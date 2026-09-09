@@ -1,0 +1,65 @@
+@model VotingSystem.Models.ViewModels.ElectionSetupViewModel
+@{
+    var e = Model.Election;
+    var locked = !Model.CanEditContent;
+    var start = e.StartAt.ToLocalTime();
+    var end = e.EndAt.ToLocalTime();
+}
+
+<div class="admin-card mb-4" id="step-1">
+    <div class="admin-card-header d-flex align-items-center gap-2">
+        <span class="badge bg-dark rounded-pill">Step 1</span>
+        <span class="admin-card-title">Election details</span>
+    </div>
+    <div class="admin-card-body">
+        @if (locked)
+        {
+            <p class="text-muted small">Details are locked because the election is published.</p>
+        }
+        <form asp-action="SaveDetails" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@e.Id" />
+            <fieldset @(locked ? "disabled" : "")>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label small fw-semibold">Election name / title <span class="text-danger">*</span></label>
+                        <input type="text" name="title" class="form-control form-control-sm" value="@e.Title" required />
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold">Description</label>
+                        <textarea name="description" rows="2" class="form-control form-control-sm">@e.Description</textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold">Other instructions voters need to see</label>
+                        <textarea name="instructions" rows="3" class="form-control form-control-sm">@e.Instructions</textarea>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Start date</label>
+                        <input type="date" name="startDate" class="form-control form-control-sm" value="@start.ToString("yyyy-MM-dd")" required />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Start time</label>
+                        <input type="time" name="startTime" class="form-control form-control-sm" value="@start.ToString("HH:mm")" required />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">End date</label>
+                        <input type="date" name="endDate" class="form-control form-control-sm" value="@end.ToString("yyyy-MM-dd")" required />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">End time</label>
+                        <input type="time" name="endTime" class="form-control form-control-sm" value="@end.ToString("HH:mm")" required />
+                    </div>
+                </div>
+                <p class="text-muted small mt-3 mb-0">
+                    The public landing page uses a fixed layout and a default election image; only these details change.
+                </p>
+            </fieldset>
+            @if (!locked)
+            {
+                <div class="mt-3 text-end">
+                    <button type="submit" class="btn btn-sm btn-dark px-3">Save details</button>
+                </div>
+            }
+        </form>
+    </div>
+</div>

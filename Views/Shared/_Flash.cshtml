@@ -1,0 +1,19 @@
+@{
+    var flash = TempData["Flash"] as string;
+    var importErrors = TempData["ImportErrors"] as string;
+}
+@if (!string.IsNullOrEmpty(flash))
+{
+    <div class="alert alert-info alert-dismissible fade show admin-flash" role="alert">
+        <span>@flash</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(importErrors))
+{
+    <div class="alert alert-warning alert-dismissible fade show admin-flash" role="alert">
+        <div class="fw-semibold mb-1">Import notes</div>
+        <pre class="mb-0 small" style="white-space: pre-wrap;">@importErrors</pre>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
