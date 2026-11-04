@@ -1,0 +1,119 @@
+/* ==========================================================================
+   Election setup (admin) — page-specific polish on top of admin.css
+   ========================================================================== */
+
+.setup-steps a {
+  display: inline-block;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-blue-light);
+  color: var(--color-blue-accent-dark);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.setup-steps a:hover {
+  background: var(--color-blue-accent);
+  color: #fff;
+}
+
+#step-1,
+#step-2,
+#step-3,
+#step-4,
+#step-5 {
+  scroll-margin-top: 1.5rem;
+}
+
+.admin-flash {
+  border-radius: var(--radius-md);
+}
+
+/* Keep number inputs compact in the positions grid */
+#positionsBody input[type="number"] {
+  max-width: 7rem;
+}
+
+/* ==========================================================================
+   Manage-election modal (internal nav + progress + sections)
+   ========================================================================== */
+
+.election-id-cell {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.75rem;
+  color: #64748b;
+  word-break: break-all;
+}
+
+.manage-panel-head {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--color-white);
+  padding: 1.25rem 1.5rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.manage-progress-wrap {
+  min-width: 220px;
+  flex: 1 1 220px;
+  max-width: 320px;
+}
+
+.manage-progress {
+  height: 0.5rem;
+  border-radius: var(--radius-pill);
+  background: #eef1f5;
+}
+
+.manage-progress .progress-bar {
+  font-size: 0.6rem;
+  line-height: 0.5rem;
+  border-radius: var(--radius-pill);
+}
+
+.manage-panel-nav {
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  border-bottom: 0;
+  padding-bottom: 0.75rem;
+}
+
+.manage-panel-nav .nav-link {
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  background: transparent;
+}
+
+.manage-panel-nav .nav-link:hover {
+  color: #0f172a;
+  background: #f1f5f9;
+}
+
+.manage-panel-nav .nav-link.active {
+  color: #fff;
+  background: #0f172a;
+}
+
+.manage-panel-body {
+  padding: 1.5rem;
+}
+
+.manage-panel-body .admin-card {
+  margin-bottom: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+.manage-panel-body .admin-card-header {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.manage-panel-body .admin-card-body {
+  padding-left: 0;
+  padding-right: 0;
+}

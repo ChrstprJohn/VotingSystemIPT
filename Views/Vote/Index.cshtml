@@ -1,0 +1,39 @@
+@model List<VotingSystem.Models.ViewModels.PublicElectionCard>
+@{
+    ViewData["Title"] = "Vote";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/vote.css" asp-append-version="true" />
+}
+
+<div class="site-page-header">
+    <h1>Elections</h1>
+    <p>Published elections appear here. When an election is ongoing, the Vote now button becomes available.</p>
+</div>
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">There are no published elections right now.</p>
+}
+
+<div class="vote-grid">
+    @foreach (var card in Model)
+    {
+        <article class="vote-card">
+            <img src="@card.Election.ImagePath" alt="" class="vote-card__img" />
+            <div class="vote-card__body">
+                <span class="vote-chip vote-chip--@card.Status.ToString().ToLower()">@card.Status</span>
+                <h2>@card.Election.Title</h2>
+                <p>@card.Election.Description</p>
+                <p class="vote-card__dates">
+                    @card.Election.StartAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")
+                    – @card.Election.EndAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")
+                </p>
+                <a class="vote-btn" asp-action="Election" asp-route-id="@card.Election.Id">
+                    @(card.Status == VotingSystem.Models.Domain.PublicElectionStatus.Ongoing ? "Vote now" : "View details")
+                </a>
+            </div>
+        </article>
+    }
+</div>

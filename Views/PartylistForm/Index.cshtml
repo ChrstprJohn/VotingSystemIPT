@@ -1,0 +1,139 @@
+@model VotingSystem.Models.ViewModels.PartylistFormViewModel
+@{
+    Layout = "_LayoutAuth";
+    ViewData["Title"] = $"{Model.Partylist.Name} — party-list form";
+    var flash = TempData["Flash"] as string;
+    var ro = Model.ReadOnly;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/party-form.css" asp-append-version="true" />
+}
+
+<div class="pform-shell">
+    <div class="pform-card">
+        <header class="pform-head">
+            <h1>@Model.Election.Title</h1>
+            <p>Party-list submission — @Model.Partylist.Name</p>
+            <span class="pform-status pform-status--@Model.Partylist.Status.ToString().ToLower()">
+                @Model.Partylist.Status
+            </span>
+        </header>
+
+        @if (!string.IsNullOrEmpty(flash))
+        {
+            <div class="pform-flash">@flash</div>
+        }
+        @if (Model.Partylist.Status == VotingSystem.Models.Domain.PartylistStatus.Returned
+           && !string.IsNullOrEmpty(Model.Partylist.CorrectionNote))
+        {
+            <div class="pform-flash pform-flash--warn">
+                <strong>Correction requested:</strong> @Model.Partylist.CorrectionNote
+            </div>
+        }
+        @if (Model.Locked)
+        {
+            <div class="pform-flash pform-flash--warn">This election is published. The form can no longer be edited.</div>
+        }
+        else if (Model.PastDeadline)
+        {
+            <div class="pform-flash pform-flash--warn">The submission deadline has passed.</div>
+        }
+        else if (Model.Partylist.Status == VotingSystem.Models.Domain.PartylistStatus.Approved)
+        {
+            <div class="pform-flash">This submission is approved. Editing it will send it back to <em>Pending review</em>.</div>
+        }
+
+        <form method="post" id="pform" action="/party-form/@Model.Partylist.FormToken/save">
+            @Html.AntiForgeryToken()
+            <fieldset @(ro ? "disabled" : "")>
+                <div class="pform-grid">
+                    <label>
+                        <span>Party-list name</span>
+                        <input type="text" name="partyName" value="@Model.Partylist.Name" required />
+                    </label>
+                    <label>
+                        <span>Leader's name</span>
+                        <input type="text" name="leaderName" value="@Model.Partylist.LeaderName" required />
+                    </label>
+                    <label>
+                        <span>Leader's email</span>
+                        <input type="email" value="@Model.Partylist.LeaderEmail" readonly />
+                    </label>
+                    @if (Model.Partylist.SubmissionDeadline is { } d)
+                    {
+                        <label>
+                            <span>Submission deadline</span>
+                            <input type="text" value="@d.ToLocalTime().ToString("MMMM d, yyyy")" readonly />
+                        </label>
+                    }
+                </div>
+
+                @foreach (var pos in Model.Positions)
+                {
+                    var existing = Model.CandidatesByPosition.GetValueOrDefault(pos.Id, new List<string>());
+                    var rows = Math.Max(existing.Count, pos.MinPerPartylist);
+                    if (rows == 0) { rows = 1; }
+                    <section class="pform-position" data-max="@pos.MaxPerPartylist" data-position="@pos.Id">
+                        <div class="pform-position__head">
+                            <h2>@pos.Name</h2>
+                            <span>@pos.MinPerPartylist–@pos.MaxPerPartylist candidate(s) · @pos.Seats seat(s)</span>
+                        </div>
+                        <div class="pform-rows">
+                            @for (var i = 0; i < rows; i++)
+                            {
+                                <div class="pform-row">
+                                    <input type="hidden" name="candPosition" value="@pos.Id" />
+                                    <input type="text" name="candName" placeholder="Candidate full name"
+                                           value="@(i < existing.Count ? existing[i] : "")" />
+                                    <button type="button" class="pform-row__remove" aria-label="Remove">&times;</button>
+                                </div>
+                            }
+                        </div>
+                        @if (!ro)
+                        {
+                            <button type="button" class="pform-add" data-add>+ Add candidate</button>
+                        }
+                    </section>
+                }
+            </fieldset>
+
+            @if (!ro)
+            {
+                <div class="pform-actions">
+                    <button type="submit" class="pform-btn pform-btn--ghost"
+                            formaction="/party-form/@Model.Partylist.FormToken/save">Save draft</button>
+                    <button type="submit" class="pform-btn"
+                            formaction="/party-form/@Model.Partylist.FormToken/submit">Submit for review</button>
+                </div>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('[data-add]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var section = btn.closest('.pform-position');
+                var rows = section.querySelector('.pform-rows');
+                var max = parseInt(section.getAttribute('data-max'), 10);
+                if (rows.querySelectorAll('.pform-row').length >= max) return;
+                var pid = section.getAttribute('data-position');
+                var div = document.createElement('div');
+                div.className = 'pform-row';
+                div.innerHTML = '<input type="hidden" name="candPosition" value="' + pid + '">' +
+                    '<input type="text" name="candName" placeholder="Candidate full name">' +
+                    '<button type="button" class="pform-row__remove" aria-label="Remove">&times;</button>';
+                rows.appendChild(div);
+            });
+        });
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('pform-row__remove')) {
+                var rows = e.target.closest('.pform-rows');
+                if (rows.querySelectorAll('.pform-row').length > 1) e.target.closest('.pform-row').remove();
+                else e.target.previousElementSibling.value = '';
+            }
+        });
+    </script>
+}

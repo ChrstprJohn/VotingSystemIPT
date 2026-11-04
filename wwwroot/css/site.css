@@ -13,6 +13,7 @@
 @import url("components/navbar.css");
 @import url("components/footer.css");
 @import url("pages/admin.css");
+@import url("pages/contact.css"); /* the Contact section is embedded in the global footer */
 
 /* 3. Global Form & Button Utilities */
 .btn-primary {
@@ -69,4 +70,34 @@
 
 .site-brand__text strong {
   color: var(--color-blue-accent);
+}
+
+/* 5. Public Site Shell (matches the admin dashboard's shadcn-style layout) */
+.site-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.site-main {
+  flex: 1 0 auto;
+}
+
+.site-page-header {
+  padding: 2rem 0 1.5rem;
+}
+
+.site-page-header h1 {
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  margin-bottom: 0.4rem;
+}
+
+.site-page-header p {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0;
+  max-width: 640px;
 }

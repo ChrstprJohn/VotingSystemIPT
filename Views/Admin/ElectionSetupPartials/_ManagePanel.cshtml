@@ -1,0 +1,104 @@
+@model VotingSystem.Models.ViewModels.ElectionSetupViewModel
+@using VotingSystem.Models.Domain
+@{
+    var active = ViewData["ActiveSection"] as string ?? "step-1";
+    var modalFlash = ViewData["ModalFlash"] as string;
+    var modalImportErrors = ViewData["ModalImportErrors"] as string;
+
+    var items = Model.Checklist.Items;
+    var done = items.Count(i => i.Ok);
+    var total = items.Count;
+    var pct = Model.IsPublished ? 100 : (total == 0 ? 0 : (int)Math.Round(done * 100.0 / total));
+
+    string StatusCss(PublicElectionStatus s) => s switch
+    {
+        PublicElectionStatus.Ongoing => "active",
+        PublicElectionStatus.Upcoming => "info",
+        PublicElectionStatus.Draft => "warning",
+        _ => "inactive"
+    };
+
+    var sections = new (string Step, string Pane, string Label)[]
+    {
+        ("step-1", "sec-details",    "Details"),
+        ("step-2", "sec-positions",  "Positions"),
+        ("step-3", "sec-partylists", "Party lists"),
+        ("step-4", "sec-voters",     "Voters"),
+        ("step-5", "sec-review",     "Review & publish"),
+    };
+
+    string NavClass(string step) => step == active ? "nav-link active" : "nav-link";
+    string PaneClass(string step) => step == active ? "tab-pane fade show active" : "tab-pane fade";
+}
+
+<div class="manage-panel" data-election-id="@Model.Election.Id">
+    <div class="manage-panel-head">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+            <div>
+                <h5 class="fw-bold mb-1">Manage — @Model.Election.Title</h5>
+                <span class="status-badge-dot @StatusCss(Model.Status)">
+                    <span class="dot-indicator @StatusCss(Model.Status)"></span>
+                    @Model.Status
+                    @if (Model.IsScheduleOnly) { <span class="text-muted">· schedule only</span> }
+                    else if (Model.IsFullyLocked) { <span class="text-muted">· locked (voting has begun)</span> }
+                </span>
+            </div>
+            <div class="manage-progress-wrap">
+                <div class="d-flex justify-content-between small mb-1">
+                    <span class="fw-semibold">Setup progress</span>
+                    <span class="text-muted">
+                        @if (Model.IsPublished) { <text>Published</text> }
+                        else { <text>@done of @total requirements</text> }
+                    </span>
+                </div>
+                <div class="progress manage-progress" role="progressbar" aria-valuenow="@pct" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar bg-dark" style="width:@(pct)%;">@pct%</div>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(modalFlash))
+        {
+            <div class="alert alert-info alert-dismissible fade show admin-flash mt-3 mb-0" role="alert">
+                <span>@modalFlash</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(modalImportErrors))
+        {
+            <div class="alert alert-warning alert-dismissible fade show admin-flash mt-2 mb-0" role="alert">
+                <div class="fw-semibold mb-1">Import notes</div>
+                <pre class="mb-0 small" style="white-space: pre-wrap;">@modalImportErrors</pre>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <ul class="nav nav-pills manage-panel-nav mt-3" role="tablist">
+            @foreach (var s in sections)
+            {
+                <li class="nav-item" role="presentation">
+                    <button class="@NavClass(s.Step)" type="button" role="tab"
+                            data-bs-toggle="pill" data-bs-target="#@s.Pane">@s.Label</button>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="tab-content manage-panel-body">
+        <div class="@PaneClass("step-1")" id="sec-details" role="tabpanel">
+            <partial name="ElectionSetupPartials/_Step1Details" model="Model" />
+        </div>
+        <div class="@PaneClass("step-2")" id="sec-positions" role="tabpanel">
+            <partial name="ElectionSetupPartials/_Step2Positions" model="Model" />
+        </div>
+        <div class="@PaneClass("step-3")" id="sec-partylists" role="tabpanel">
+            <partial name="ElectionSetupPartials/_Step3Partylists" model="Model" />
+        </div>
+        <div class="@PaneClass("step-4")" id="sec-voters" role="tabpanel">
+            <partial name="ElectionSetupPartials/_Step4Voters" model="Model" />
+        </div>
+        <div class="@PaneClass("step-5")" id="sec-review" role="tabpanel">
+            <partial name="ElectionSetupPartials/_Step5Review" model="Model" />
+        </div>
+    </div>
+</div>

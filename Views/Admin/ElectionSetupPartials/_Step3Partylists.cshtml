@@ -1,0 +1,198 @@
+@model VotingSystem.Models.ViewModels.ElectionSetupViewModel
+@using VotingSystem.Models.Domain
+@{
+    var locked = !Model.CanEditContent;
+
+    (string css, string label) Badge(PartylistStatus s) => s switch
+    {
+        PartylistStatus.Approved => ("active", "Approved"),
+        PartylistStatus.Pending => ("warning", "Pending review"),
+        PartylistStatus.Returned => ("inactive", "Returned for correction"),
+        _ => ("info", "Draft — not submitted")
+    };
+}
+
+<div class="admin-card mb-4" id="step-3">
+    <div class="admin-card-header d-flex align-items-center gap-2">
+        <span class="badge bg-dark rounded-pill">Step 3</span>
+        <span class="admin-card-title">Party lists &amp; candidates</span>
+    </div>
+    <div class="admin-card-body">
+        <p class="text-muted small">
+            The system emails each leader a secure form link (no account needed). Leaders fill in details and
+            candidates, then submit for review. Only approved party lists appear on the ballot. All submissions
+            must be approved before publishing.
+        </p>
+
+        @if (!locked)
+        {
+            <form asp-action="AddPartylist" method="post" class="row g-2 align-items-end border rounded p-3 mb-3 bg-light">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Election.Id" />
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Party-list name <span class="text-danger">*</span></label>
+                    <input type="text" name="name" class="form-control form-control-sm" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Leader's name <span class="text-danger">*</span></label>
+                    <input type="text" name="leaderName" class="form-control form-control-sm" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Leader's email <span class="text-danger">*</span></label>
+                    <input type="email" name="leaderEmail" class="form-control form-control-sm" required />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Deadline</label>
+                    <input type="date" name="deadline" class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-sm btn-dark w-100" data-loading-text="Sending…">Add</button>
+                </div>
+            </form>
+        }
+
+        @if (Model.Partylists.Count == 0)
+        {
+            <p class="text-muted small mb-0">No party lists added yet.</p>
+        }
+
+        <div class="row g-3">
+            @foreach (var card in Model.Partylists)
+            {
+                var p = card.Partylist;
+                var b = Badge(p.Status);
+                <div class="col-md-6">
+                    <div class="border rounded p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="fw-bold mb-0">@p.Name</h6>
+                                <span class="text-muted small">@p.LeaderName · @p.LeaderEmail</span>
+                            </div>
+                            <span class="status-badge-dot @b.css"><span class="dot-indicator @b.css"></span>@b.label</span>
+                        </div>
+
+                        <div class="small text-muted mt-2">
+                            @card.CandidateCount candidate(s)
+                            @if (p.SubmissionDeadline is { } d) { <span>· deadline @d.ToLocalTime().ToString("MMM d, yyyy")</span> }
+                            @if (p.LinkSentAt is not null) { <span>· link sent</span> }
+                        </div>
+
+                        @if (p.Status == PartylistStatus.Returned && !string.IsNullOrEmpty(p.CorrectionNote))
+                        {
+                            <div class="alert alert-warning small py-2 px-2 mt-2 mb-0">Note to leader: @p.CorrectionNote</div>
+                        }
+
+                        @{
+                            var reviewId = $"pl-review-{p.Id}";
+                            var noCandidates = card.CandidatesByPosition.All(g => g.CandidateNames.Count == 0);
+                        }
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-xs btn-outline-dark"
+                                    data-bs-toggle="collapse" data-bs-target="#@reviewId" aria-expanded="false">
+                                View submitted form
+                            </button>
+                        </div>
+                        <div class="collapse mt-2" id="@reviewId">
+                            <div class="border rounded bg-light p-2 small">
+                                <div class="mb-2">
+                                    <div><span class="text-muted">Party name:</span> <span class="fw-semibold">@p.Name</span></div>
+                                    <div><span class="text-muted">Leader:</span> <span class="fw-semibold">@p.LeaderName</span> &lt;@p.LeaderEmail&gt;</div>
+                                    @if (p.SubmittedAt is { } sa)
+                                    {
+                                        <div><span class="text-muted">Submitted:</span> @sa.ToLocalTime().ToString("MMM d, yyyy h:mm tt")</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-muted fst-italic">Not submitted yet — showing the leader's saved draft.</div>
+                                    }
+                                </div>
+
+                                @if (noCandidates)
+                                {
+                                    <p class="text-muted mb-0">No candidates entered yet.</p>
+                                }
+                                else
+                                {
+                                    foreach (var g in card.CandidatesByPosition)
+                                    {
+                                        <div class="mb-2">
+                                            <div class="fw-semibold">
+                                                @g.PositionName
+                                                <span class="text-muted fw-normal">(@g.CandidateNames.Count of @g.MinPerPartylist–@g.MaxPerPartylist)</span>
+                                                @if (!g.MeetsRule)
+                                                {
+                                                    <span class="badge bg-warning text-dark">outside range</span>
+                                                }
+                                            </div>
+                                            @if (g.CandidateNames.Count == 0)
+                                            {
+                                                <div class="text-muted">— none —</div>
+                                            }
+                                            else
+                                            {
+                                                <ol class="mb-0 ps-3">
+                                                    @foreach (var name in g.CandidateNames)
+                                                    {
+                                                        <li>@name</li>
+                                                    }
+                                                </ol>
+                                            }
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div class="input-group input-group-sm mt-2">
+                            <input type="text" class="form-control" readonly value="@card.LeaderLink" />
+                            <button type="button" class="btn btn-outline-secondary" data-copy="@card.LeaderLink">Copy link</button>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            <form asp-action="SendLeaderLink" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@Model.Election.Id" />
+                                <input type="hidden" name="partylistId" value="@p.Id" />
+                                <button type="submit" class="btn btn-xs btn-outline-secondary" data-loading-text="Sending…">Email link</button>
+                            </form>
+
+                            @if (p.Status == PartylistStatus.Pending)
+                            {
+                                <form asp-action="ReviewPartylist" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@Model.Election.Id" />
+                                    <input type="hidden" name="partylistId" value="@p.Id" />
+                                    <input type="hidden" name="action" value="approve" />
+                                    <button type="submit" class="btn btn-xs btn-dark">Approve</button>
+                                </form>
+                            }
+
+                            @if (!locked)
+                            {
+                                <form asp-action="DeletePartylist" method="post" class="d-inline"
+                                      onsubmit="return confirm('Remove this party list and its candidates?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@Model.Election.Id" />
+                                    <input type="hidden" name="partylistId" value="@p.Id" />
+                                    <button type="submit" class="btn btn-xs btn-outline-danger">Remove</button>
+                                </form>
+                            }
+                        </div>
+
+                        @if (p.Status == PartylistStatus.Pending)
+                        {
+                            <form asp-action="ReviewPartylist" method="post" class="input-group input-group-sm mt-2">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@Model.Election.Id" />
+                                <input type="hidden" name="partylistId" value="@p.Id" />
+                                <input type="hidden" name="action" value="return" />
+                                <input type="text" name="note" class="form-control" placeholder="Correction note..." />
+                                <button type="submit" class="btn btn-outline-secondary" data-loading-text="Sending…">Send back</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

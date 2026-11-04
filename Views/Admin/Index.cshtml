@@ -1,3 +1,176 @@
+@model VotingSystem.Models.ViewModels.AdminDashboardViewModel
 @{
     ViewData["Title"] = "Dashboard";
+
+    string StatusBadge(VotingSystem.Models.Domain.PublicElectionStatus s) => s switch
+    {
+        VotingSystem.Models.Domain.PublicElectionStatus.Ongoing => "active",
+        VotingSystem.Models.Domain.PublicElectionStatus.Upcoming => "info",
+        VotingSystem.Models.Domain.PublicElectionStatus.Draft => "warning",
+        _ => "inactive"
+    };
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/admin.css" asp-append-version="true" />
+}
+
+<partial name="_Flash" />
+
+@if (!Model.HasElections)
+{
+    <div class="admin-card">
+        <div class="admin-card-body text-center py-5">
+            <h2 class="admin-card-title mb-2">Welcome to the election dashboard</h2>
+            <p class="text-muted mb-4">No elections yet. Create your first one to get started.</p>
+            <form asp-action="CreateElection" method="post" class="d-inline-flex gap-2 justify-content-center">
+                @Html.AntiForgeryToken()
+                <input type="text" name="title" class="form-control form-control-sm" style="max-width: 320px;"
+                       placeholder="Election name" required />
+                <button type="submit" class="btn btn-sm btn-dark px-3">Create election</button>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <div class="voters-metrics-row mb-4">
+        <div class="metric-mini-card">
+            <div><div class="metric-mini-label">Total elections</div><div class="metric-mini-val">@Model.TotalElections</div></div>
+        </div>
+        <div class="metric-mini-card">
+            <div><div class="metric-mini-label">Ongoing</div><div class="metric-mini-val text-success">@Model.Ongoing.Count</div></div>
+        </div>
+        <div class="metric-mini-card">
+            <div><div class="metric-mini-label">Upcoming</div><div class="metric-mini-val text-primary">@Model.Upcoming.Count</div></div>
+        </div>
+        <div class="metric-mini-card">
+            <div><div class="metric-mini-label">Draft</div><div class="metric-mini-val text-warning">@Model.Draft.Count</div></div>
+        </div>
+    </div>
+
+    @foreach (var snap in Model.OngoingSnapshots)
+    {
+        <div class="admin-card mb-4">
+            <div class="admin-card-header d-flex justify-content-between align-items-center">
+                <span class="admin-card-title">Live: @snap.Election.Title</span>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-xs btn-outline-secondary" asp-action="Reports" asp-route-id="@snap.Election.Id">View reports</a>
+                    <form asp-action="CloseElection" method="post" class="m-0"
+                          onsubmit="return confirm('End @snap.Election.Title now? Voting closes immediately and cannot be reopened.');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@snap.Election.Id" />
+                        <button type="submit" class="btn btn-xs btn-outline-danger">End now</button>
+                    </form>
+                </div>
+            </div>
+            <div class="admin-card-body">
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <div class="text-muted small">Eligible voters</div>
+                        <div class="fs-4 fw-bold">@snap.EligibleVoters</div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-muted small">Ballots submitted</div>
+                        <div class="fs-4 fw-bold">@snap.BallotsSubmitted</div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-muted small">Turnout</div>
+                        <div class="fs-4 fw-bold">@snap.TurnoutPercent%</div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-muted small">Time remaining</div>
+                        <div class="fs-4 fw-bold">
+                            @(snap.TimeRemaining.TotalSeconds > 0
+                                ? $"{(int)snap.TimeRemaining.TotalHours}h {snap.TimeRemaining.Minutes}m"
+                                : "Closing")
+                        </div>
+                    </div>
+                </div>
+                <div class="progress mt-3" style="height: 8px;">
+                    <div class="progress-bar bg-dark" role="progressbar"
+                         style="width: @snap.TurnoutPercent.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.Attention.Count > 0)
+    {
+        <div class="admin-card mb-4">
+            <div class="admin-card-header"><span class="admin-card-title">Needs attention</span></div>
+            <div class="admin-card-body">
+                <ul class="list-unstyled mb-0">
+                    @foreach (var a in Model.Attention)
+                    {
+                        <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <span><span class="fw-semibold">@a.ElectionTitle</span> — <span class="text-muted">@a.Message</span></span>
+                            <a class="btn btn-xs btn-outline-secondary" asp-action="Elections" asp-route-manage="@a.ElectionId">Open setup</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+    @foreach (var group in new[]
+    {
+        ("Draft", Model.Draft),
+        ("Upcoming", Model.Upcoming),
+        ("Ongoing", Model.Ongoing),
+        ("Completed", Model.Completed)
+    })
+    {
+        if (group.Item2.Count == 0) { continue; }
+        <div class="admin-card mb-4">
+            <div class="admin-card-header"><span class="admin-card-title">@group.Item1</span></div>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Election</th>
+                            <th>Schedule</th>
+                            <th>Status</th>
+                            <th>Ballot setup</th>
+                            <th style="text-align:right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in group.Item2)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="voter-name-main text-dark">@item.Election.Title</span>
+                                    <span class="voter-email-sub">@item.Election.Description</span>
+                                </td>
+                                <td class="small text-muted">
+                                    @item.Election.StartAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")<br />
+                                    to @item.Election.EndAt.ToLocalTime().ToString("MMM d, yyyy h:mm tt")
+                                </td>
+                                <td>
+                                    <span class="status-badge-dot @StatusBadge(item.Status)">
+                                        <span class="dot-indicator @StatusBadge(item.Status)"></span>
+                                        @item.Status
+                                    </span>
+                                </td>
+                                <td class="small">
+                                    <span class="badge bg-light text-dark border">@item.PositionCount positions</span>
+                                    <span class="badge bg-light text-dark border">@item.PartylistCount party lists</span>
+                                    <span class="badge bg-light text-dark border">@item.EligibleVoters voters</span>
+                                </td>
+                                <td style="text-align:right;">
+                                    <a class="btn btn-xs btn-dark" asp-action="Elections" asp-route-manage="@item.Election.Id">Manage</a>
+                                    @if (item.Status == VotingSystem.Models.Domain.PublicElectionStatus.Ongoing
+                                       || item.Status == VotingSystem.Models.Domain.PublicElectionStatus.Closed)
+                                    {
+                                        <a class="btn btn-xs btn-outline-secondary" asp-action="Reports" asp-route-id="@item.Election.Id">Reports</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 }
